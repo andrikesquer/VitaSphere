@@ -14,6 +14,21 @@ header a {
     font-weight: 600;
 }
 
+.company {
+    display: flex;
+    align-items: center;
+    gap: 3%;
+}
+
+.company img {
+    height: 40px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.company img:hover {
+    transform: scale(1.1);
+}
+
 .nav {
     list-style: none;
     margin: 0;
