@@ -1,7 +1,13 @@
+.container {
+    background-image: radial-gradient(circle, var(--Blue-200), var(--Blue-500));
+}
+
 .divForm {
     width: 30%;
     border-radius: 8px;
     padding: 2%;
+    margin-top: 5%;
+    margin-bottom: 5%;
     display: flex;
     flex-direction: column;
     align-items: center;
