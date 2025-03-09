@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    {% load static %}
+    <link rel="icon" href="{% static 'images/brand/vitasphere-logo.png' %}">
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/header.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    {% block links %}
+    {% endblock %}
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import '@material/web/all.js';
+      import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+      document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
+</head>
+<body>
+  <header>
+    <div class="company">
+      <!-- <img src="{% static 'images/vitasphereLogo.png' %}" alt="Logo VitaSphere"> -->
+      <a href="/">VitaSphere</a>
+    </div>
+    <ul class="nav">
+      <li><a href="/">Home</a></li>
+  
+      {% if request.path == '/' %}
+          <li><a href="#about">Acerca de</a></li>
+          <li><a href="#features">Características</a></li>
+      {% endif %}
+  
+      <li><a href="#contact">Contacto</a></li>
+  
+      {% if user.email %}
+          <li><a href="/profile/">{{ user.name }}</a></li>
+      {% else %}
+          {% if request.path == '/' %}
+              <li><a href="{% url 'login' %}">Inicio de sesión</a></li>
+              <li><a href="{% url 'register' %}">Registro</a></li>
+          {% endif %}
+      {% endif %}
+
+      {% if request.path == '/login/' %}  
+        <li><a href="{% url 'register' %}">Registro</a></li>
+      {% endif %}
+
+      {% if request.path == '/register/' %}  
+        <li><a href="{% url 'login' %}">Inicio de sesión</a></li>
+      {% endif %}
+  </ul>  
+  </header>
+  <main class="container">
+    {% block content %}
+    {% endblock %}
+  </main>
+  <footer>
+    <div class="footer">
+      <div class="footerSection">
+        <h3>Contáctanos</h3>
+        <p>info@vitasphere.com</p>
+        <p>01 800 288 2666</p>
+      </div>
+      <div class="footerSection">
+        <h3>Legales</h3>
+        <p><a href="/">Política de Privacidad</a></p>
+        <p><a href="/">Términos y Condiciones</a></p>
+      </div>
+      <div class="footerSection" id="contact">
+        <h3>Síguenos</h3>
+        <div class="socialMedia">
+          <img src="{% static 'images/social-media/yt.png' %}" alt="Icono YouTube">
+          <img src="{% static 'images/social-media/ig.png' %}" alt="Icono Instagram">
+          <img src="{% static 'images/social-media/fb.png' %}" alt="Icono Facebook">
+          <img src="{% static 'images/social-media/tik-tok.png' %}" alt="Icono Tik Tok">
+        </div>
+        <p>@vitasphere</p>
+      </div>
+    </div>
+    <hr>
+    <p>2025 VitaSphere. Todos los derechos reservados.</p>
+  </footer>
+</body>
+</html>
