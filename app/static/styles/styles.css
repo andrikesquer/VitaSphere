@@ -1,4 +1,5 @@
 :root {
+    /*Colors*/
     --Blue-100: #B0B8CF;
     --Blue-200: #4D638C;
     --Blue-300: #154B5C;
@@ -13,6 +14,16 @@
     --Olive: #BAB9A7;
     --Aloe: #755F4A;
     --Sand: #C0AE94;
+    /*Fonts*/
+    --font-primary: "Quicksand", serif;
+    --font-secondary: "Roboto", serif;
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-bold: 700;
+    --font-size-sm: 14px;
+    --font-size-md: 18px;
+    --font-size-lg: 2green4px;
+    --font-size-xl: 50px;
 }
 
 html {
