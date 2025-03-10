@@ -11,7 +11,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: white;
+    background-color: var(--Greyser);
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
 }
@@ -25,12 +25,15 @@
 .greetingForm {
     margin: 0;
     text-align: center;
+    font-family: var(--font-primary);
+    color: var(--Mineral-green);
 }
     
 .greetingComplement {
-    color: grey;
     margin: 5%;
     text-align: center;
+    font-family: var(--font-secondary);
+    color: var(--Outer-space);
 }
 
 .input {
@@ -39,30 +42,26 @@
     border-radius: 5px;
     padding: 0;
 }
-
-.submit {
-    background-color: black;
-    color: white;
-}
     
 a {
     text-decoration: underline;
-    color: black;
+    font-family: var(--font-secondary);
+    color: var(--Mineral-green);
 }
 
 .wrongCredentials {
-    color: red;
+    color: var(--Blue-500);
 }
 
 :root {
     --md-outlined-text-field-container-shape: 0px;
     --md-sys-typescale-body-large: 400 1rem system-ui;
-    --md-sys-color-primary: black;
-    --md-outlined-text-field-label-text-color: #3f4948;
-    --md-outlined-text-field-input-text-color: #161d1d;
+    --md-sys-color-primary: var(--Mineral-green);
+    --md-outlined-text-field-label-text-color: var(--Mineral-green);
+    --md-outlined-text-field-input-text-color: var(--Green-spring);
 
     --md-filled-tonal-button-container-shape: 0px;
     --md-filled-tonal-button-label-text-font: system-ui;
-    --md-sys-color-secondary-container: black;
-    --md-sys-color-on-secondary-container: white;
+    --md-sys-color-secondary-container: var(--Outer-space);
+    --md-sys-color-on-secondary-container: var(--Greyser);
 }
