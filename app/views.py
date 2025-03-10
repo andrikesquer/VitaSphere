@@ -4,6 +4,8 @@ from django.contrib.auth.hashers import make_password
 from bson.objectid import ObjectId 
 from django.contrib.auth.hashers import check_password
 from .models import users_collection
+from django.contrib.auth.decorators import login_required
+
 
 def register(request):
     if request.method == "POST":
@@ -76,6 +78,7 @@ def home (request):
 def statistics(request):
     return render(request, "statistics.html")
 
+@login_required(login_url='login')
 def profile (request):
     return render(request, "profile.html")
     
