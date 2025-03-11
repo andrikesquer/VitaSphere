@@ -28,6 +28,5 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path('statistics/',views.statistics, name="statistics"),
     path("profile/", views.profile, name="profile"),
-    path("settings/", views.settings, name="settings"),
-    path("get_live_data", views.get_live_data, name="get_live_data"),
+    path("settings/", views.settings, name="settings")
 ]
