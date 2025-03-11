@@ -44,6 +44,7 @@ a {
     text-decoration: underline;
     font-family: var(--font-secondary);
     color: var(--Mineral-green);
+    padding-bottom: 2%;
 }
 
 .wrongCredentials {
