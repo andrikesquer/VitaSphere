@@ -1,6 +1,6 @@
 :root {
     --md-filled-tonal-button-container-shape: 0px;
-    --md-filled-tonal-button-label-text-font: system-ui;
+    --md-filled-tonal-button-label-text-font: var(--font-primary);
     --md-sys-color-secondary-container: var(--Green-spring);
     --md-sys-color-on-secondary-container: var(--Outer-space);
 }

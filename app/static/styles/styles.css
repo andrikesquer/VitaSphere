@@ -22,7 +22,7 @@
     --font-weight-bold: 700;
     --font-size-sm: 14px;
     --font-size-md: 18px;
-    --font-size-lg: 2green4px;
+    --font-size-lg: 24px;
     --font-size-xl: 50px;
 }
 
@@ -41,4 +41,5 @@ body {
 
 .container {
     padding: 0;
+    background-image: radial-gradient(circle, var(--Blue-200), var(--Blue-500));
 }

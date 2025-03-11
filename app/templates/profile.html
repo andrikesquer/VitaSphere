@@ -13,21 +13,55 @@
 <div class="profCont">
     <div class="profTitle">
         <div class="cardContainer">
+            <img src="{% static 'images/person.png' %}" alt="Icono de Persona">
             <h3>Profile</h3>
         </div>
     </div>
     <div class="profImg">
+        <img src="{% static 'images/profile.png' %}" alt="Icono de Cuenta">
         <div class="cardContainer">
             <h1>{fname}</h1>
-            <p>{uname}</p>
+            <md-outlined-text-field
+                type="text"
+                class="input"
+                id="fname"
+                name="fname"
+                value={fname}
+                readOnly=true>
+            </md-outlined-text-field>
+            <p>{lname}</p>
+            <md-outlined-text-field
+                type="text"
+                class="input"
+                id="lname"
+                name="lname"
+                value={lname}
+                readOnly=true>
+            </md-outlined-text-field>
         </div>
     </div>
     <div class="card">
         <div class="cardContainer">
-            <p>Nombre(s)</p>
-            <h4>{fname}</h4>
-            <p>Apellido(s)</p>
-            <h4>{lname}</h4>
+            <p>Contraseña</p>
+            <md-outlined-text-field
+                type="password"
+                class="input"
+                id="password"
+                name="password"
+                value={password}
+                readOnly=true
+                error-text="Por favor, ingrese su contraseña">
+            </md-outlined-text-field>
+            <p>Contraseña de confirmación</p>
+            <md-outlined-text-field
+                type="password"
+                class="input"
+                id="password"
+                name="password"
+                value={password}
+                readOnly=true
+                error-text="Por favor, ingrese su contraseña">
+            </md-outlined-text-field>
         </div>
     </div>
     <div class="card">

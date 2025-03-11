@@ -1,6 +1,6 @@
 .container {
-    padding-left: 10%;
-    padding-right: 10%;
+    padding-left: 15%;
+    padding-right: 15%;
 }
 
 .settCont {
@@ -9,12 +9,27 @@
 }
 
 .settTitle {
-    padding-left: 2%;
+    padding-left: 1%;
+    margin-bottom: 4%;
+}
+
+.settTitle div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.settTitle div img {
+    height: 30px;
+    margin-right: 1%;
 }
 
 .settTitle div h3 {
-    padding-top: 1.5%;
-    padding-bottom: 1.5%;
+    margin-top: 1.5%;
+    margin-bottom: 1.5%;
+    font-family: var(--font-primary);
+    color: var(--Outer-space);
+    font-size: var(--font-size-md);
 }
 
 .leftCont {
@@ -32,7 +47,7 @@
 }
 
 .settTitle, .imgCont {
-    background-color: white;
+    background-color: var(--Greyser);
     border-radius: 5px;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
@@ -48,13 +63,18 @@
 
 :root {
     --md-filled-tonal-button-container-shape: 0px;
-    --md-filled-tonal-button-label-text-font: system-ui;
-    --md-sys-color-secondary-container: black;
-    --md-sys-color-on-secondary-container: white;
+    --md-filled-tonal-button-label-text-font: var(--font-primary);
+    --md-sys-color-secondary-container: var(--Greyser);
+    --md-sys-color-on-secondary-container: var(--Outer-space);
+
+    --md-list-container-color: var(--Greyser);
+    --md-list-item-label-text-color: var(--Outer-space);
+    --md-list-item-supporting-text-color: var(--Mineral-green);
+    --md-list-item-label-text-font: var(--font-primary);
+    --md-list-item-supporting-text-font: var(--font-secondary);
 }
 
 .input {
-    width: 100%;
     padding: 1%;
     border-radius: 5px;
     height: 75px;
@@ -63,16 +83,16 @@
     transition: 0.3s;
 }
 
-.settBody {
-    display: flex;
-    flex-direction: row;
+.rightCont {
+    flex: 2;
 }
 
 .contacts {
-    padding: 0;
-    display: flex;
-    flex: 2;
     border-radius: 5px;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
+}
+
+.settBody {
+    display: flex;
+    width: 100%;
 }

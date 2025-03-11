@@ -13,6 +13,7 @@
 <div class="settCont">
     <div class="settTitle">
         <div class="cardContainer">
+            <img src="{% static 'images/settings.png' %}" alt="Icono de Ajustes">
             <h3>Contactos de Emergencia</h3>
         </div>
     </div>
@@ -20,7 +21,7 @@
         <div class="leftCont">
             <div class="imgCont">
                 <div class="cardContainer">
-                    <p>Imagen</p>
+                    <img src="{% static 'images/contacts.png' %}" alt="Icono de Contactos">
                 </div>
             </div>
             <md-filled-tonal-button
@@ -31,39 +32,41 @@
                 Editar Contactos de Emergencia
             </md-filled-tonal-button>
         </div>
-        <md-list class="contacts" style="max-width: 500px;">
-            <md-divider></md-divider>
-            <md-list-item>
-                <div slot="headline">{fname + lname}</div>
-                <div slot="supporting-text">{phone}</div>
-                <div slot="supporting-text">{relation}</div>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item>
-                <div slot="headline">{fname + lname}</div>
-                <div slot="supporting-text">{phone}</div>
-                <div slot="supporting-text">{relation}</div>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item>
-                <div slot="headline">{fname + lname}</div>
-                <div slot="supporting-text">{phone}</div>
-                <div slot="supporting-text">{relation}</div>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item>
-                <div slot="headline">{fname + lname}</div>
-                <div slot="supporting-text">{phone}</div>
-                <div slot="supporting-text">{relation}</div>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item>
-                <div slot="headline">{fname + lname}</div>
-                <div slot="supporting-text">{phone}</div>
-                <div slot="supporting-text">{relation}</div>
-            </md-list-item>
-            <md-divider></md-divider>
-        </md-list>
+        <div class="rightCont">
+            <md-list class="contacts">
+                <md-divider></md-divider>
+                <md-list-item>
+                    <div slot="headline">{fname + lname}</div>
+                    <div slot="supporting-text">{phone}</div>
+                    <div slot="supporting-text">{relation}</div>
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item>
+                    <div slot="headline">{fname + lname}</div>
+                    <div slot="supporting-text">{phone}</div>
+                    <div slot="supporting-text">{relation}</div>
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item>
+                    <div slot="headline">{fname + lname}</div>
+                    <div slot="supporting-text">{phone}</div>
+                    <div slot="supporting-text">{relation}</div>
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item>
+                    <div slot="headline">{fname + lname}</div>
+                    <div slot="supporting-text">{phone}</div>
+                    <div slot="supporting-text">{relation}</div>
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item>
+                    <div slot="headline">{fname + lname}</div>
+                    <div slot="supporting-text">{phone}</div>
+                    <div slot="supporting-text">{relation}</div>
+                </md-list-item>
+                <md-divider></md-divider>
+            </md-list>
+        </div>
     </div>
 </div>
 {% endblock %}
