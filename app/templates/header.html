@@ -48,8 +48,8 @@
   
       <li><a href="#contact">Contacto</a></li>
   
-      {% if request.session.email %}
-          <li><a href="/profile/">{{ request.session.nombre }}</a></li>
+      {% if user.email %}
+          <li><a href="/profile/">{{ user.name }}</a></li>
       {% else %}
           {% if request.path == '/' %}
               <li><a href="{% url 'login' %}">Inicio de sesión</a></li>
