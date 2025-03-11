@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
+import json
+import random
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import make_password
 from bson.objectid import ObjectId 
 from django.contrib.auth.hashers import check_password
@@ -12,7 +15,6 @@ import base64
 
 
 def encriptar_password(password: str) -> str:
-    """Hashea la contraseña usando HMAC-SHA256 y la clave secreta."""
     hashed = hmac.new(SECRET_KEY.encode(), password.encode(), hashlib.sha256).digest()
     return base64.b64encode(hashed).decode()
 
@@ -26,19 +28,15 @@ def register(request):
         conf_pass = request.POST.get("confpass")
         fecha = request.POST.get("birthday")
 
-        # Validar si las contraseñas coinciden
         if password != conf_pass:
             return HttpResponse("Las contraseñas no coinciden", status=400)
 
-        # Verificar si el usuario ya existe
         existing_user = users_collection.find_one({"email": email})
         if existing_user:
             return HttpResponse("El usuario ya existe", status=400)
 
-        # Hashear la contraseña con HMAC-SHA256
         hashed_password = encriptar_password(password)
 
-        # Insertar en la base de datos
         users_collection.insert_one({
             "_id": ObjectId(),
             "nombre": name.strip(),
@@ -46,7 +44,7 @@ def register(request):
             "telefono": telefono.strip(),
             "email": email.strip(),
             "password": hashed_password,
-            "confpassword": hashed_password,  # Se almacena para compatibilidad con Flutter
+            "confpassword": hashed_password,
             "fecha": fecha.strip()
         })
 
@@ -66,11 +64,9 @@ def login(request):
         if not user:
             return HttpResponse("❌ Usuario no encontrado", status=401)
 
-        # Extraer la contraseña almacenada
         stored_password = user.get("password")
         stored_confpassword = user.get("confpassword")
 
-        # Encriptar la contraseña ingresada y compararla con la almacenada
         hashed_password = encriptar_password(password)
 
         if hashed_password == stored_password or hashed_password == stored_confpassword:
@@ -100,7 +96,14 @@ def home (request):
     return render(request, "home.html")
 
 def statistics(request):
-    return render(request, "statistics.html")
+    data = {
+        'categories': ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+        'pulso': [72, 75, 78, 80, 76,90,100,],
+        'oxigeno': [98, 97, 99, 96, 98,60,70],
+        'temperatura': [37, 36.8, 37.2, 37.5, 37.1, 45,50],
+    }
+    
+    return render(request, 'statistics.html', {'data_json': json.dumps(data)})
 
 def profile(request):
     #Descomentar las lineas inferiores para que el usuario no pueda acceder a la pagina de profile sin haber iniciado sesion
@@ -110,3 +113,22 @@ def profile(request):
     
 def settings (request):
     return render(request, 'settings.html')
+
+def get_live_data(request):
+    """Genera datos dinámicos para Highcharts"""
+    
+    # Obtener la hora actual
+    now = datetime.now()
+    
+    # Generar una lista de las últimas 10 horas
+    horas = [(now - timedelta(hours=i)).strftime("%H:%M") for i in range(9, -1, -1)]
+    
+    # Generar datos aleatorios para cada hora
+    data = {
+        "categories": horas,  # Eje X (Horas)
+        "pulso": [random.randint(60, 100) for _ in range(10)],
+        "oxigeno": [random.randint(95, 100) for _ in range(10)],
+        "temperatura": [round(random.uniform(36.5, 37.5), 1) for _ in range(10)]
+    }
+    
+    return JsonResponse(data)
