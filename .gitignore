@@ -1,3 +1,7 @@
 __pycache__/
 */__pycache__/
 */*/__pycache__/
+venv2/
+db_conn.py
+project\settings.py
+
