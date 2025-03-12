@@ -47,17 +47,13 @@ a {
     padding-bottom: 2%;
 }
 
-.wrongCredentials {
-    color: var(--Blue-500);
-}
-
 :root {
     --md-outlined-text-field-container-shape: 0px;
     --md-sys-typescale-body-large: 400 1rem system-ui;
     --md-sys-color-primary: var(--Mineral-green);
     --md-outlined-text-field-label-text-color: var(--Mineral-green);
     --md-outlined-text-field-label-text-font: var(--font-primary);
-    --md-outlined-text-field-input-text-color: var(--Green-spring);
+    --md-outlined-text-field-input-text-color: var(--Outer-space);
     --md-outlined-text-field-input-text-font: var(--font-secondary);
 
     --md-filled-tonal-button-container-shape: 0px;

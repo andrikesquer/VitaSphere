@@ -28,6 +28,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path('statistics/',views.statistics, name="statistics"),
     path("profile/", views.profile, name="profile"),
+    path("update_profile/", views.update_profile, name="update_profile"),
     path("settings/", views.settings, name="settings"),
     path("get_live_data", views.get_live_data, name="get_live_data"),
 ]

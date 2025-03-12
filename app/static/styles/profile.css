@@ -1,24 +1,31 @@
 .container {
-    padding-left: 15%;
-    padding-right: 15%;
+    padding: 4% 15% 6%;
 }
 
 .profCont {
-    width: 100%;
-    padding: 4% 12% 8% 12%;
     display: grid;
-    gap: 9% 3%;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6% 3%;
+    width: 100%;
+    max-width: 100%;
     margin-bottom: 5%;
 }
 
 .profTitle {
     grid-column: 1 / span 3;
     padding-left: 2%;
+    background-color: var(--Greyser);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+
+.profTitle:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
 .profTitle div {
     display: flex;
-    flex-direction: row;
     align-items: center;
 }
 
@@ -34,45 +41,53 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.profImg h1, .profImg p {
-    text-align: center;
-}
-
-.profTitle, .profImg, .card {
     background-color: var(--Greyser);
     border-radius: 5px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
 }
 
-.card {
-    padding-left: 4%;
+.profImg:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
-.profTitle:hover, .profImg:hover,.card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+.profImg h1,
+.profImg p {
+    text-align: center;
+}
+
+.profImg h1 {
+    font-size: var(--font-size-lg);
+}
+
+.card {
+    padding: 3% 6% 6%;
+    background-color: var(--Greyser);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
 .cardContainer {
     text-align: start;
 }
 
-.cardContainer h1, .cardContainer h3, .cardContainer h4 {
+.cardContainer h1,
+.cardContainer h3 {
     font-family: var(--font-primary);
 }
 
-.cardContainer h1, .cardContainer h4 {
+.cardContainer h1 {
     color: var(--Mineral-green);
-}
-
-.cardContainer h3, .cardContainer h4 {
-    font-size: var(--font-size-md);
 }
 
 .cardContainer h3 {
     color: var(--Outer-space);
+    font-size: var(--font-size-md);
 }
 
 .cardContainer p {
@@ -87,6 +102,13 @@
     justify-content: space-between;
 }
 
+.input {
+    width: 100%;
+    height: 60px;
+    padding: 0;
+    border-radius: 5px;
+}
+
 :root {
     --md-filled-tonal-button-container-shape: 0px;
     --md-filled-tonal-button-label-text-font: var(--font-primary);
@@ -96,15 +118,6 @@
     --md-outlined-text-field-container-shape: 0px;
     --md-sys-typescale-body-large: 400 1rem system-ui;
     --md-sys-color-primary: var(--Mineral-green);
-    /*--md-outlined-text-field-label-text-color: var(--Mineral-green);*/
-    /*--md-outlined-text-field-label-text-font: var(--font-primary);*/
-    --md-outlined-text-field-input-text-color: var(--Mineral-green);
+    --md-outlined-text-field-input-text-color: var(--Outer-space);
     --md-outlined-text-field-input-text-font: var(--font-primary);
-}
-
-.input {
-    width: 100%;
-    padding: 1%;
-    border-radius: 5px;
-    height: 80px;
 }

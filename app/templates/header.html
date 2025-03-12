@@ -29,13 +29,19 @@
       import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
       document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
     </script>
+    <!-- Messages -->
+    <script>
+      setTimeout(() => {
+          document.querySelectorAll(".messages li").forEach(msg => {
+              msg.style.display = "none";
+          });
+      }, 10000);
+    </script>
 </head>
 <body>
   <header>
     <div class="company">
-      <a href="/">
-          <img src="{% static 'images/brand/vitasphere-logo.png' %}" alt="Logo VitaSphere">
-      </a>
+      <a href="/"><img src="{% static 'images/brand/vitasphere-logo.png' %}" alt="Logo VitaSphere"></a>
       <a href="/">VitaSphere</a>
     </div>
     <ul class="nav">
@@ -49,7 +55,9 @@
       <li><a href="#contact">Contacto</a></li>
   
       {% if request.session.email %}
-          <li><a href="/profile/">{{ request.session.nombre }}</a></li>
+        <a href="/statistics"><img src="{% static 'images/header/vital-signs-blue.png' %}" alt="Logo Estadisticas"></a>
+        <a href="/settings"><img src="{% static 'images/header/settings-blue.png' %}" alt="Logo Settings"></a>
+        <a href="/profile"><img src="{% static 'images/header/profile-blue.png' %}" alt="Logo Perfil"></a>
       {% else %}
           {% if request.path == '/' %}
               <li><a href="{% url 'login' %}">Inicio de sesión</a></li>
@@ -69,6 +77,13 @@
   <main class="container">
     {% block content %}
     {% endblock %}
+    {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+              <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+      </ul>
+    {% endif %}
   </main>
   <footer>
     <div class="footer">
