@@ -52,12 +52,12 @@ def register(request):
         })
 
         # Iniciar sesión automáticamente
-        request.session["nombre"] = lname
-        request.session["apellidos"] = fname
+        request.session["nombre"] = fname
+        request.session["apellidos"] = lname
         request.session["fecha_nacimiento"] = birthday
         request.session["sexo"] = sex
-        request.session["email"] = email
         request.session["tel"] = tel
+        request.session["email"] = email
         request.session["is_authenticated"] = True
 
         return redirect("/")
@@ -203,7 +203,6 @@ def delete_account(request):
         else:
             messages.error(request, "Error al eliminar cuenta, intente de nuevo")
             return redirect("/profile/")
-
     
 def settings (request):
     return render(request, 'settings.html')
