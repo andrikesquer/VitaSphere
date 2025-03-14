@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from bson.objectid import ObjectId 
 from django.contrib.auth.hashers import check_password
+from rest_framework.parsers import JSONParser
+
 from project.settings import SECRET_KEY
 from .models import users_collection
 from django.contrib.auth.decorators import login_required
@@ -14,6 +16,37 @@ import hashlib
 import hmac
 import base64
 from pymongo.errors import PyMongoError
+
+from .models import users_collection, sensores
+from django.views.decorators.csrf import csrf_exempt
+import json
+from rest_framework import viewsets
+from .serializers import SensoresSerializer
+from .models import Lectura_sen
+
+
+class SensoresViewSet(viewsets.ModelViewSet):
+    queryset = Lectura_sen.objects.all()
+    serializer_class = SensoresSerializer
+
+@csrf_exempt
+def metrica(request):
+    if request.method == 'GET':
+        snippets = Lectura_sen.objects.all()
+        serializer = SensoresSerializer(snippets, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = SensoresSerializer(data=data)
+
+
+
+        if serializer.is_valid():
+            serializer.save()
+            sensores.insert_one(data)
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
 
 def encriptar_password(password: str) -> str:
     hashed = hmac.new(SECRET_KEY.encode(), password.encode(), hashlib.sha256).digest()
