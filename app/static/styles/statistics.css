@@ -6,11 +6,12 @@
 
 #fondoN{
     /*contenedor de todo*/
-    background-color: pink;
+    background-color: var(--Greyser);
     padding:3% 6% 3% 6% ;
     width: 100%;
     height: 100%;
 }
+
 .Con_esta{/*conetenedro de las metricas */
     background-color: white;
     width: 100%;

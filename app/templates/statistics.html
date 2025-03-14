@@ -15,8 +15,8 @@
 {% endblock %}
 
 {% block content %}
-   <div id="fondoN">
-       <h1 class="titulo">Bienvenido de nuevo, {{ nombre }}!</h1>
+    <div id="fondoN">
+       <h1 class="titulo">Bienvenido de nuevo, {{ request.session.nombre }}!</h1>
        <h2 class="subtitulo">Aquí tienes un resumen de tus estadísticas de salud.</h2>
 
        <div id="sep">
@@ -65,7 +65,7 @@
        </div>
    </div>
 
-   <script>
+    <script>
           document.addEventListener('DOMContentLoaded', function () {
            let chart = Highcharts.chart('container', {
                chart: { type: 'line' },
@@ -94,5 +94,5 @@
            updateChart();  // Cargar datos la primera vez
            setInterval(updateChart, 1000);  // Actualizar cada 5 segundos
        });
-   </script>
+    </script>
 {% endblock %}
