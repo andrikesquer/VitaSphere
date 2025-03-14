@@ -54,7 +54,7 @@ def register(request):
         # Iniciar sesión automáticamente
         request.session["nombre"] = lname
         request.session["apellidos"] = fname
-        request.session["fecha_nacimiento"] = fecha_nacimiento
+        request.session["fecha_nacimiento"] = birthday
         request.session["sexo"] = sex
         request.session["email"] = email
         request.session["tel"] = tel
@@ -76,6 +76,9 @@ def login(request):
 
         if not user:
             return HttpResponse("Usuario no encontrado", status=401)
+
+        if user.get("estado") != "activo":
+            return HttpResponse("Tu cuenta está inactiva. Contacta al administrador.", status=403)
 
         stored_password = user.get("password")
         stored_confpassword = user.get("confpassword")
@@ -186,6 +189,21 @@ def update_profile(request):
             return redirect("profile")
 
     return render(request, "profile.html")
+
+def delete_account(request):
+    if request.method == "POST":
+        email = request.session.get("email")
+        result = users_collection.update_one(
+            {"email": email}, 
+            {"$set": {"estado": "inactivo"}}
+        )
+        if result.modified_count == 1:
+            request.session.flush()
+            return redirect("/")
+        else:
+            messages.error(request, "Error al eliminar cuenta, intente de nuevo")
+            return redirect("/profile/")
+
     
 def settings (request):
     return render(request, 'settings.html')

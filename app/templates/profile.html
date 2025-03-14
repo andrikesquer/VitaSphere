@@ -9,23 +9,61 @@
         document.addEventListener("DOMContentLoaded", function() {
             const editButton = document.getElementById("editbtn");
             const saveButton = document.getElementById("savebtn");
+            const deleteButton = document.getElementById("deletebtn");
             const inputs = document.querySelectorAll(".input");
             const selectSex = document.getElementById("sex");
-
+            const togglePassButton = document.getElementById("togglePass");
+            const passwordInput = document.getElementById("password");
+            const confirmPasswordInput = document.getElementById("conf_pass");
+    
             selectSex.value = '{{ request.session.sexo }}';
-
+    
             editButton.addEventListener("click", function() {
                 inputs.forEach(input => {
                     input.removeAttribute("readOnly");
                 });
+                togglePassButton.removeAttribute("disabled");
                 sex.disabled = false;
+            });
+    
+            togglePassButton.addEventListener("click", function() {
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    confirmPasswordInput.type = "text";
+                } else {
+                    passwordInput.type = "password";
+                    confirmPasswordInput.type = "password";
+                }
             });
 
             saveButton.addEventListener("click", function() {
                 document.getElementById("profileForm").submit();
             });
+
+            deleteButton.addEventListener("click", function() {
+                if (confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.")) {
+                    fetch("{% url 'delete_account' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                            "Content-Type": "application/json"
+                        },
+                        credentials: "same-origin"
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = "/";
+                        } else {
+                            console.error("Error en la respuesta del servidor");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error en la solicitud fetch:", error);
+                    });
+                }
+            });
         });
-    </script>          
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -96,7 +134,12 @@
 
         <div class="card">
             <div class="cardContainer">
-                <p>Contraseña</p>
+                <div class="visibility">
+                    <p>Contraseña</p>
+                    <button type="button" id="togglePass" disabled>
+                        <img src="{% static 'images/visibility.png' %}" alt="Visibilidad">
+                    </button>
+                </div>
                 <md-outlined-text-field
                     type="password"
                     class="input"
