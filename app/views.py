@@ -17,7 +17,7 @@ import hmac
 import base64
 from pymongo.errors import PyMongoError
 
-from .models import users_collection
+from .models import users_collection, sensores
 from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework import viewsets
@@ -39,8 +39,12 @@ def metrica(request):
     elif request.method == 'POST':
         data = JSONParser().parse(request)
         serializer = SensoresSerializer(data=data)
+
+
+
         if serializer.is_valid():
             serializer.save()
+            sensores.insert_one(data)
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
@@ -83,7 +87,7 @@ def register(request):
         # Iniciar sesión automáticamente
         request.session["nombre"] = lname
         request.session["apellidos"] = fname
-        request.session["fecha_nacimiento"] = fecha_nacimiento
+        request.session["fecha_nacimiento"] = birthday
         request.session["sexo"] = sex
         request.session["email"] = email
         request.session["tel"] = tel
