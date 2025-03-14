@@ -54,7 +54,7 @@ def register(request):
         # Iniciar sesión automáticamente
         request.session["nombre"] = lname
         request.session["apellidos"] = fname
-        request.session["fecha_nacimiento"] = fecha_nacimiento
+        request.session["fecha_nacimiento"] = birthday
         request.session["sexo"] = sex
         request.session["email"] = email
         request.session["tel"] = tel
