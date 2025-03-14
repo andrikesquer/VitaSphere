@@ -101,14 +101,6 @@ def logout_view(request):
     request.session.flush()
     return redirect("/")
 
-def users(request):
-    if not request.session.get("is_authenticated", False):
-        return redirect("login")
-
-    user_list = users_collection.find({}, {"_id": 0, "username": 1, "email": 1})
-
-    return render(request, "users.html", {"users": user_list})
-
 def home (request):
     return render(request, "home.html")
 
