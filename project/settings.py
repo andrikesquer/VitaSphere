@@ -27,8 +27,9 @@ SECRET_KEY = 'django-insecure-2zy+g8o(lm@3-t9#z-1s4!_w!&&+oin-3xy%11$l&jke!rjw77
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.100.99', '0.0.0.0','10.1.125.77:8000','*',]
 
 # Application definition
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'app',
 ]
 
@@ -77,14 +79,14 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
+DATABASES = {
+        'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
-DATABASES = {}
+#DATABASES = {}
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
