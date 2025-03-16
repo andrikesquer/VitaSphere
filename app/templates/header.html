@@ -37,6 +37,11 @@
           });
       }, 10000);
     </script>
+    <script>
+      function confirmLogout() {
+          return confirm("¿Enserio deseas cerrar sesión?");
+      }
+    </script>    
 </head>
 <body>
   <header>
@@ -68,6 +73,9 @@
         <a href="/statistics"><img src="{% static 'images/header/vital-signs-blue.png' %}" alt="Logo Estadisticas"></a>
         <a href="/contacts"><img src="{% static 'images/header/contacts-blue.png' %}" alt="Logo Settings"></a>
         <a href="/profile"><img src="{% static 'images/header/profile-blue.png' %}" alt="Logo Perfil"></a>
+        <a href="/logout" onclick="return confirmLogout();">
+          <img src="{% static 'images/header/logout-blue.png' %}" alt="Logo Salir">
+        </a>
       {% else %}
           {% if request.path == '/' %}
               <li><a href="{% url 'login' %}">Inicio de sesión</a></li>
