@@ -8,7 +8,6 @@ from django.contrib.auth.hashers import make_password
 from bson.objectid import ObjectId 
 from django.contrib.auth.hashers import check_password
 from rest_framework.parsers import JSONParser
-
 from project.settings import SECRET_KEY
 from .models import users_collection
 from django.contrib.auth.decorators import login_required
@@ -37,16 +36,22 @@ def metrica(request):
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = SensoresSerializer(data=data)
-
-
-
-        if serializer.is_valid():
-            serializer.save()
+        try:
+            # Parsear JSON de la solicitud
+            data = JSONParser().parse(request)
+            
+            # Insertar en MongoDB
             sensores.insert_one(data)
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+
+            # Serializar y guardar en Django ORM (opcional)
+            serializer = SensoresSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse(serializer.data, status=201)
+            return JsonResponse(serializer.errors, status=400)
+        
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
 def encriptar_password(password: str) -> str:
     hashed = hmac.new(SECRET_KEY.encode(), password.encode(), hashlib.sha256).digest()
@@ -111,14 +116,14 @@ def login(request):
             return HttpResponse("Usuario no encontrado", status=401)
 
         stored_password = user.get("password")
-        stored_confpassword = user.get("confpassword")
 
         hashed_password = encriptar_password(password)
 
-        if hashed_password == stored_password or hashed_password == stored_confpassword:
+        if hashed_password == stored_password:
+            request.session["id"] = str(user["_id"])
             request.session["nombre"] = user["nombre"]
             request.session["apellidos"] = user["apellidos"]
-            request.session["fecha_nacimiento"] = user["fecha_nacimiento"]
+            #request.session["birthday"] = user["birthday"]
             request.session["sexo"] = user["sexo"]
             request.session["email"] = user["email"]
             request.session["tel"] = user["telefono"]
@@ -224,7 +229,6 @@ def settings (request):
     return render(request, 'settings.html')
 
 def get_live_data(request):
-    """Genera datos dinámicos para Highcharts"""
     
     # Obtener la hora actual
     now = datetime.now()
