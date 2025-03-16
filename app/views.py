@@ -37,11 +37,11 @@ def metrica(request):
         try:
             # Parsear JSON de la solicitud
             data = JSONParser().parse(request)
-            
             # Insertar en MongoDB
             sensores.insert_one(data)
             return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
 
 def encriptar_password(password: str) -> str:
     hashed = hmac.new(SECRET_KEY.encode(), password.encode(), hashlib.sha256).digest()
