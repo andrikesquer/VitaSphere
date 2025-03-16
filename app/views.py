@@ -80,15 +80,15 @@ def register(request):
         })
 
         # Iniciar sesión automáticamente
-        request.session["nombre"] = lname
-        request.session["apellidos"] = fname
-        request.session["fecha_nacimiento"] = birthday
-        request.session["sexo"] = sex
-        request.session["tel"] = tel
-        request.session["email"] = email
-        request.session["is_authenticated"] = True
+       # request.session["nombre"] = lname
+       # request.session["apellidos"] = fname
+        #request.session["fecha_nacimiento"] = birthday
+        #request.session["sexo"] = sex
+        #request.session["tel"] = tel
+        #request.session["email"] = email
+        #request.session["is_authenticated"] = True
 
-        return redirect("/")
+        return redirect("login")
     
     return render(request, "register.html")
 
@@ -114,6 +114,7 @@ def login(request):
         hashed_password = encriptar_password(password)
 
         if hashed_password == stored_password or hashed_password == stored_confpassword:
+            request.session["id"] = str(user["_id"])
             request.session["nombre"] = user["nombre"]
             request.session["apellidos"] = user["apellidos"]
             request.session["fecha_nacimiento"] = user["fecha_nacimiento"]
