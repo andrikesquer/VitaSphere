@@ -32,4 +32,8 @@ urlpatterns = [
     path("contacts/", views.contacts, name="contacts"),
     path("manage_contacts", views.manage_contacts, name="manage_contacts"),
     path("get_live_data", views.get_live_data, name="get_live_data"),
+    path('',include('app.urls')),
+
+
+
 ]
