@@ -7,6 +7,29 @@
 {% block links %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/form.css' %}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const togglePassButton = document.getElementById("togglePass");
+            const passwordInput = document.getElementById("pass");
+            const confPassInput = document.getElementById("confpass");
+            const eyeIcon = togglePassButton.querySelector('img');
+            const toggleText = togglePassButton.querySelector('p');
+
+            togglePassButton.addEventListener("click", function() {
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    confPassInput.type = "text";
+                    eyeIcon.src = "{% static 'images/visibility_off.png' %}";
+                    toggleText.textContent = "Ocultar contraseñas";
+                } else {
+                    passwordInput.type = "password";
+                    confPassInput.type = "password";
+                    eyeIcon.src = "{% static 'images/visibility.png' %}";
+                    toggleText.textContent = "Mostrar contraseñas";
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -111,8 +134,14 @@
             label="Confirmar contraseña"
             placeholder="Ingresa de nuevo su contraseña"
             required
-            error-text="Por favor, ingrese de nuevo su contraseña">
+            error-text="Por favor, ingrese de nuevo su contraseña"
+            style="margin-bottom: 0;">
         </md-outlined-text-field>
+
+        <button type="button" id="togglePass" class="togglePass">
+            <img src="{% static 'images/visibility.png' %}" alt="Visibilidad">
+            <p>Mostrar contraseña</p>
+        </button>
 
         <md-filled-tonal-button
             type="submit"

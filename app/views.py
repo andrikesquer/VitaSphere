@@ -31,9 +31,7 @@ def register(request):
         conf_pass = request.POST.get("confpass")
 
         if password != conf_pass:
-            messages.error(request, "Las contraseñas no coinciden")
-            return redirect("register")
-
+            return HttpResponse("Las contraseñas no coinciden", status=400)
 
         existing_user = users_collection.find_one({"email": email})
         if existing_user:
@@ -77,12 +75,10 @@ def login(request):
         user = users_collection.find_one({"email": email})
 
         if not user:
-            messages.error(request, "Usuario no encontrado")
-            return redirect("login")
+            return HttpResponse("Usuario no encontrado", status=401)
 
         if user.get("estado") != "activo":
-            messages.error(request, "Tu cuenta está inactiva. Contacta al administrador")
-            return redirect("login")
+            return HttpResponse("Tu cuenta está inactiva. Contacta al administrador.", status=403)
 
         stored_password = user.get("password")
         stored_confpassword = user.get("confpassword")
@@ -100,8 +96,7 @@ def login(request):
 
             return redirect("/")
 
-        messages.error(request, "Usuario o contraseña incorrectos")
-        return redirect("login")
+        return HttpResponse("Usuario o contraseña incorrectos", status=401)
 
     return render(request, "login.html")
 
