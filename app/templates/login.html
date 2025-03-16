@@ -7,6 +7,26 @@
 {% block links %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/form.css' %}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const togglePassButton = document.getElementById("togglePass");
+            const passwordInput = document.getElementById("password");
+            const eyeIcon = togglePassButton.querySelector('img');
+            const toggleText = togglePassButton.querySelector('p');
+
+            togglePassButton.addEventListener("click", function() {
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    eyeIcon.src = "{% static 'images/visibility_off.png' %}";
+                    toggleText.textContent = "Ocultar contraseña";
+                } else {
+                    passwordInput.type = "password";
+                    eyeIcon.src = "{% static 'images/visibility.png' %}";
+                    toggleText.textContent = "Mostrar contraseña";
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -23,8 +43,7 @@
             name="email"
             label="Correo electrónico"
             placeholder="Ingresa tu correo electrónico"
-            pattern="[\w\d-]+"
-            suffix-text="@gmail.com"
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
             required
             error-text="Por favor, ingrese su correo electrónico">
         </md-outlined-text-field>
@@ -37,8 +56,15 @@
             label="Contraseña"
             placeholder="Ingresa tu contraseña"
             required
-            error-text="Por favor, ingrese su contraseña">
+            error-text="Por favor, ingrese su contraseña"
+            style="margin-bottom: 0;">
         </md-outlined-text-field>
+
+        
+        <button type="button" id="togglePass" class="togglePass">
+            <img src="{% static 'images/visibility.png' %}" alt="Visibilidad">
+            <p>Mostrar contraseña</p>
+        </button>
 
         <md-filled-tonal-button
             type="submit"
@@ -47,6 +73,7 @@
             name="submit">                
             Iniciar sesión
         </md-filled-tonal-button>
+        
     </form>
     {% if error %}
         <p class="wrongCredentials">{{error}}</p>

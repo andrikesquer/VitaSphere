@@ -31,11 +31,13 @@ def register(request):
         conf_pass = request.POST.get("confpass")
 
         if password != conf_pass:
-            return HttpResponse("Las contraseñas no coinciden", status=400)
+            messages.error(request, "Las contraseñas no coinciden")
+            return redirect("register")
+
 
         existing_user = users_collection.find_one({"email": email})
         if existing_user:
-            return HttpResponse("El usuario ya existe", status=400)
+            return HttpResponse("Este correo electrónico ya se encuentra registrado", status=400)
 
         hashed_password = encriptar_password(password)
 
@@ -75,10 +77,12 @@ def login(request):
         user = users_collection.find_one({"email": email})
 
         if not user:
-            return HttpResponse("Usuario no encontrado", status=401)
+            messages.error(request, "Usuario no encontrado")
+            return redirect("login")
 
         if user.get("estado") != "activo":
-            return HttpResponse("Tu cuenta está inactiva. Contacta al administrador.", status=403)
+            messages.error(request, "Tu cuenta está inactiva. Contacta al administrador")
+            return redirect("login")
 
         stored_password = user.get("password")
         stored_confpassword = user.get("confpassword")
@@ -96,7 +100,8 @@ def login(request):
 
             return redirect("/")
 
-        return HttpResponse("Usuario o contraseña incorrectos", status=401)
+        messages.error(request, "Usuario o contraseña incorrectos")
+        return redirect("login")
 
     return render(request, "login.html")
 
@@ -204,8 +209,51 @@ def delete_account(request):
             messages.error(request, "Error al eliminar cuenta, intente de nuevo")
             return redirect("/profile/")
     
-def settings (request):
-    return render(request, 'settings.html')
+def contacts (request):
+    
+    email = request.session.get("email")
+    if not email:
+        return redirect('login')
+
+    user = users_collection.find_one({"email": email})
+    if not user:
+        return HttpResponse("Usuario no encontrado", status=404)
+
+    contacts = user.get('contacts', [])
+    return render(request, 'contacts.html', {'contacts': contacts})
+
+def manage_contacts(request):
+    if request.method == "POST":
+        email = request.session.get('email')
+        if not email:
+            return redirect('login')
+
+        # Procesar contactos existentes
+        names = request.POST.getlist('name')
+        tels = request.POST.getlist('tel')
+        relations = request.POST.getlist('relation')
+
+        # Procesar nuevos contactos
+        new_names = request.POST.getlist('new_name')
+        new_tels = request.POST.getlist('new_tel')
+        new_relations = request.POST.getlist('new_relation')
+
+        # Combinar todos los contactos
+        contacts = [
+            {'nombre': name, 'telefono': tel, 'relacion': rel}
+            for name, tel, rel in zip(names + new_names, tels + new_tels, relations + new_relations)
+        ]
+
+        # Actualizar en Mongo
+        users_collection.update_one(
+            {'email': email},
+            {'$set': {'contacts': contacts}}
+        )
+
+        return redirect('contacts')
+
+    return redirect('contacts')
+    
 
 def get_live_data(request):
     """Genera datos dinámicos para Highcharts"""

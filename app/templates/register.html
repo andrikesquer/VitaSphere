@@ -45,6 +45,7 @@
             name="birthday"
             label="Fecha de nacimiento"
             placeholder="Ingresa tu fecha de nacimiento"
+            max="2007-03-15"
             required
             error-text="Por favor, ingrese su fecha de nacimiento">
         </md-outlined-text-field>
@@ -57,6 +58,12 @@
             <md-select-option value="Masculino">
               <div slot="headline">Masculino</div>
             </md-select-option>
+            <md-select-option value="Otro">
+                <div slot="headline">Otro</div>
+            </md-select-option>
+            <md-select-option value="Prefiero no decirlo">
+                <div slot="headline">Prefiero no decirlo</div>
+            </md-select-option>
         </md-outlined-select>
 
         <md-outlined-text-field
@@ -66,6 +73,9 @@
             name="tel"
             label="Número de celular"
             placeholder="Ingresa tu número de teléfono"
+            minlength="10"
+            maxlength="10"
+            pattern="[0-9]{10}"
             required
             error-text="Por favor, ingrese su número de teléfono">
         </md-outlined-text-field>
@@ -77,8 +87,7 @@
             name="email"
             label="Correo electrónico"
             placeholder="Ingresa tu correo electrónico"
-            pattern="[\w\d-]+"
-            suffix-text="@gmail.com"
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
             required
             error-text="Por favor, ingrese su correo electrónico">
         </md-outlined-text-field>

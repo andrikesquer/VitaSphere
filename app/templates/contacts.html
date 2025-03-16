@@ -1,0 +1,190 @@
+{% extends 'header.html' %}
+
+{% block title %}
+    Contactos
+{% endblock %}
+
+{% block links %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/contacts1.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="settCont">
+    <div class="settTitle">
+        <div class="cardContainer">
+            <img src="{% static 'images/contacts/contacts.png' %}" alt="Icono de Ajustes">
+            <h3>Contactos de Emergencia</h3>
+        </div>
+    </div>
+    <div class="settBody">
+        <div class="leftCont">
+            <div class="imgCont">
+                <div class="cardContainer">
+                    <img src="{% static 'images/contacts/contacts.png' %}" alt="Icono de Contactos">
+                </div>
+            </div>
+            <md-filled-tonal-button
+                type="button"
+                class="editbtn"
+                id="editbtn"
+                name="button">
+                Editar Contactos de Emergencia
+            </md-filled-tonal-button>
+        </div>
+
+        <form id="contacts" class="contacts-container" method="POST" action="{% url 'manage_contacts' %}">
+            {% csrf_token %}
+            <md-list class="contacts-list" id="contactsList">
+                {% for contact in contacts %}
+                <md-list-item>
+                    <div class="contact-item">
+                        <div class="contact-info">
+                            <md-outlined-text-field
+                                type="text"
+                                class="input"
+                                name="name"
+                                value="{{ contact.nombre }}"
+                                label="Nombre"
+                                required
+                                no-asterisk=true
+                                readOnly=true
+                            ></md-outlined-text-field>
+                            <md-outlined-text-field
+                                type="tel"
+                                class="input"
+                                name="tel"
+                                value="{{ contact.telefono }}"
+                                label="Teléfono"
+                                required
+                                no-asterisk=true
+                                readOnly=true
+                            ></md-outlined-text-field>
+                            <md-outlined-text-field
+                                type="text"
+                                class="input"
+                                name="relation"
+                                value="{{ contact.relacion }}"
+                                label="Relación"
+                                required
+                                no-asterisk=true
+                                readOnly=true
+                            ></md-outlined-text-field>
+                        </div>
+                        <div class="contact-actions">
+                            <md-icon-button class="delete-btn" onclick="deleteContact(this)" disabled>
+                                <img src="{% static 'images/contacts/contact_remove.png' %}" alt="Eliminar contacto">
+                            </md-icon-button>
+                        </div>
+                    </div>
+                    <md-divider></md-divider>
+                </md-list-item>
+                {% endfor %}
+            </md-list>
+
+            <template id="newContactTemplate">
+                <md-list-item class="new-contact">
+                    <div class="contact-item">
+                        <div class="contact-info">
+                            <md-outlined-text-field
+                                type="text"
+                                class="input"
+                                name="new_name"
+                                label="Nombre"
+                                placeholder="Nuevo contacto"
+                                required
+                                no-asterisk=true
+                            ></md-outlined-text-field>
+                            <md-outlined-text-field
+                                type="tel"
+                                class="input"
+                                name="new_tel"
+                                label="Teléfono"
+                                required
+                                no-asterisk=true
+                            ></md-outlined-text-field>
+                            <md-outlined-text-field
+                                type="text"
+                                class="input"
+                                name="new_relation"
+                                label="Relación"
+                                required
+                                no-asterisk=true
+                            ></md-outlined-text-field>
+                        </div>
+                        <div class="contact-actions">
+                            <md-icon-button class="remove-btn" onclick="removeNewContact(this)">
+                                <img src="{% static 'images/contacts/contact_remove.png' %}" alt="Eliminar contacto">
+                            </md-icon-button>
+                        </div>
+                    </div>
+                    <md-divider></md-divider>
+                </md-list-item>
+            </template>
+
+            <div class="form-actions">
+                <md-filled-tonal-button type="submit" id="save" disabled>
+                    Guardar Cambios
+                </md-filled-tonal-button>
+                <md-icon-button type="button" id="addContactBtn" class="add-btn" disabled>
+                    <img src="{% static 'images/contacts/contact_add.png' %}" alt="Agregar contacto">
+                </md-icon-button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const addButton = document.getElementById('addContactBtn');
+        const contactsList = document.getElementById('contactsList');
+        const template = document.getElementById('newContactTemplate');
+        const inputs = document.querySelectorAll('.contact-info md-outlined-text-field'); // Definir inputs
+        const editButton = document.getElementById("editbtn");
+        const save = document.getElementById("save");
+        const addContactBtn = document.getElementById("addContactBtn");
+
+        // Agregar nuevo contacto
+        addButton.addEventListener('click', () => {
+            const clone = template.content.cloneNode(true);
+            const newContact = clone.querySelector('md-list-item');
+            setTimeout(() => newContact.classList.add('show'), 10);
+            contactsList.appendChild(clone);
+        });
+
+        // Habilitar edición
+        editButton.addEventListener("click", function() {
+            // Habilitar campos de texto
+            inputs.forEach(input => input.removeAttribute("readOnly"));
+            
+            // Habilitar botones
+            save.disabled = false;
+            addContactBtn.disabled = false;
+            
+            // Habilitar todos los botones de eliminar
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.disabled = false;
+            });
+        });
+    });
+
+    function removeNewContact(button) {
+        const listItem = button.closest('md-list-item');
+        listItem.classList.remove('show');
+        setTimeout(() => {
+            listItem.remove();
+        }, 300);
+    }
+
+    function deleteContact(button) {
+        const listItem = button.closest('md-list-item');
+        if (confirm('¿Estás seguro de eliminar este contacto? Debes borrar toda su información para confirmar')) {
+            listItem.style.opacity = '0';
+            setTimeout(() => {
+                listItem.remove();
+            }, 300);
+        }
+    }
+</script>
+
+{% endblock %}
