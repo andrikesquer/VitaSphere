@@ -34,11 +34,11 @@ def metrica(request):
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = SensoresSerializer(data=data)
-
-        if serializer.is_valid():
-            serializer.save()
+        try:
+            # Parsear JSON de la solicitud
+            data = JSONParser().parse(request)
+            
+            # Insertar en MongoDB
             sensores.insert_one(data)
 
             # Serializar y guardar en Django ORM (opcional)
