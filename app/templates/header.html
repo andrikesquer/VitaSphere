@@ -37,6 +37,11 @@
           });
       }, 10000);
     </script>
+    <script>
+      function confirmLogout() {
+          return confirm("¿Enserio deseas cerrar sesión?");
+      }
+    </script>    
 </head>
 <body>
   <header>
@@ -45,7 +50,9 @@
       <a href="/">VitaSphere</a>
     </div>
     <ul class="nav">
-      <li><a href="/">Home</a></li>
+      {% if request.path != '/' %}
+        <li><a href="/">Home</a></li>
+      {% endif %}
   
       {% if request.path == '/' %}
           <li><a href="#about">Acerca de</a></li>
@@ -53,24 +60,27 @@
       {% endif %}
   
       <li><a href="#contact">Contacto</a></li>
-  
-      {% if request.session.email %}
-        <a href="/statistics"><img src="{% static 'images/header/vital-signs-blue.png' %}" alt="Logo Estadisticas"></a>
-        <a href="/settings"><img src="{% static 'images/header/settings-blue.png' %}" alt="Logo Settings"></a>
-        <a href="/profile"><img src="{% static 'images/header/profile-blue.png' %}" alt="Logo Perfil"></a>
-      {% else %}
-          {% if request.path == '/' %}
-              <li><a href="{% url 'login' %}">Inicio de sesión</a></li>
-              <li><a href="{% url 'register' %}">Registro</a></li>
-          {% endif %}
-      {% endif %}
 
       {% if request.path == '/login/' %}  
         <li><a href="{% url 'register' %}">Registro</a></li>
       {% endif %}
 
-      {% if request.path == '/register/' %}  
+      {% if request.path == '/register/' %}
         <li><a href="{% url 'login' %}">Inicio de sesión</a></li>
+      {% endif %}
+  
+      {% if request.session.email %}
+        <a href="/statistics"><img src="{% static 'images/header/vital-signs-blue.png' %}" alt="Logo Estadisticas"></a>
+        <a href="/contacts"><img src="{% static 'images/header/contacts-blue.png' %}" alt="Logo Settings"></a>
+        <a href="/profile"><img src="{% static 'images/header/profile-blue.png' %}" alt="Logo Perfil"></a>
+        <a href="/logout" onclick="return confirmLogout();">
+          <img src="{% static 'images/header/logout-blue.png' %}" alt="Logo Salir">
+        </a>
+      {% else %}
+          {% if request.path == '/' %}
+              <li><a href="{% url 'login' %}">Inicio de sesión</a></li>
+              <li><a href="{% url 'register' %}">Registro</a></li>
+          {% endif %}
       {% endif %}
   </ul>  
   </header>

@@ -61,3 +61,26 @@ a {
     --md-sys-color-secondary-container: var(--Outer-space);
     --md-sys-color-on-secondary-container: var(--Greyser);
 }
+
+.togglePass {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1%;
+}
+
+.togglePass {
+    background-color: var(--Greyser);
+    border: none;
+}
+
+.togglePass img {
+    height: 20px;
+}
+
+.togglePass p {
+    font-family: var(--font-secondary);
+    color: var(--Outer-space);
+    font-size: var(--font-size-sm);
+}

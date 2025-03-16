@@ -1,65 +1,69 @@
 .container {
-    padding: 0;
+    padding: 10%;
+    padding-top: 2%;
+    padding-bottom: 4%;
     display: flex;
-    align-items: start;
 }
 
-#fondoN{
-    /*contenedor de todo*/
-    background-color: var(--Greyser);
-    padding:3% 6% 3% 6% ;
+.fondo {
     width: 100%;
     height: 100%;
 }
 
-.Con_esta{/*conetenedro de las metricas */
+h1 {
+    font-family: var(--font-primary);
+    color: white;
+}
+
+h3 {
+    font-size: var(--font-size-lg);
+    font-family: var(--font-secondary);
+    color: white;
+}
+
+.con {
     background-color: white;
     width: 100%;
-    max-width: 380px;
     box-sizing: border-box;
     border-radius: 8px;
     box-shadow: 0.4px 8px 0 rgba(0,0,0,0.06);
     transition: 0.3s;
-    padding: 0 20px 5px 23px;
-    font-size: 25px;
+    padding: 2%;
 }
 
-#Con_graf { /*contenedor de la grafica*/
+.sep { 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2%;
+}
+
+.peque {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-family: var(--font-secondary);
+    color: var(--Mineral-green);
+}
+
+.sign{
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    margin: 10px 0 10px 0;
+    font-family: var(--font-primary);
+    color: var(--Outer-space);
+}
+
+.graf {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0.4px 8px 0 rgba(0, 0, 0, 0.06);
     transition: 0.3s;
-    padding: 5px 0 0 23px;
+    padding: 3%;
     height: 100%;
-    margin-top: 25px;
+    margin-top: 2.5%;
 }
 
-#sep{/* Contenedor de los 4 recuadros de arriba*/
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-.peque{/*letra de los titulos de los recuadros*/
-    font-size: 25px;
-    margin:0 0 0 0;
-
-}
-.sign{/*Letra de los signos*/
-    font-size: 35px;
-    font-weight: bold;
-    margin: 10px 0 10px 0;
-}
-
-h1{
-    font-size: 38px;
-    font-weight: bold;
-}
-h2{
-    font-size: 29px;
-    font-weight: normal;
-}
-
-.Tex_img{
+.Tex_img {
     height: 35px;
     display: flex;
     flex-direction: row;
