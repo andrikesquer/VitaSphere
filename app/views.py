@@ -40,16 +40,8 @@ def metrica(request):
             
             # Insertar en MongoDB
             sensores.insert_one(data)
-
-            # Serializar y guardar en Django ORM (opcional)
-            serializer = SensoresSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return JsonResponse(serializer.data, status=201)
-            return JsonResponse(serializer.errors, status=400)
-        
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
 
 def encriptar_password(password: str) -> str:
     hashed = hmac.new(SECRET_KEY.encode(), password.encode(), hashlib.sha256).digest()
@@ -117,14 +109,14 @@ def login(request):
             return HttpResponse("Tu cuenta está inactiva. Contacta al administrador.", status=403)
 
         stored_password = user.get("password")
+        stored_confpassword = user.get("confpassword")
 
         hashed_password = encriptar_password(password)
 
-        if hashed_password == stored_password:
-            request.session["id"] = str(user["_id"])
+        if hashed_password == stored_password or hashed_password == stored_confpassword:
             request.session["nombre"] = user["nombre"]
             request.session["apellidos"] = user["apellidos"]
-            #request.session["birthday"] = user["birthday"]
+            request.session["fecha_nacimiento"] = user["fecha_nacimiento"]
             request.session["sexo"] = user["sexo"]
             request.session["email"] = user["email"]
             request.session["tel"] = user["telefono"]
@@ -286,6 +278,7 @@ def manage_contacts(request):
     return redirect('contacts')
 
 def get_live_data(request):
+    """Genera datos dinámicos para Highcharts"""
     
     # Obtener la hora actual
     now = datetime.now()
