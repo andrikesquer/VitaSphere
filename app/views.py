@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import json
 import random
+from django.utils import timezone
+
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
@@ -23,7 +25,7 @@ import json
 from rest_framework import viewsets
 from .serializers import SensoresSerializer
 from .models import Lectura_sen
-from db_conn import db
+
 
 class SensoresViewSet(viewsets.ModelViewSet):
     queryset = Lectura_sen.objects.all()
@@ -39,10 +41,13 @@ def metrica(request):
 
     elif request.method == 'POST':
         data = JSONParser().parse(request)
+        data["fecha_hora"] = timezone.now().replace(tzinfo=None)
+        print(data)
         serializer = SensoresSerializer(data=data)
 
         if serializer.is_valid():
             sensores.insert_one(serializer.validated_data)
+
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
