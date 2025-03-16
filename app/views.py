@@ -23,7 +23,7 @@ import json
 from rest_framework import viewsets
 from .serializers import SensoresSerializer
 from .models import Lectura_sen
-
+from db_conn import db
 
 class SensoresViewSet(viewsets.ModelViewSet):
     queryset = Lectura_sen.objects.all()
@@ -32,6 +32,7 @@ class SensoresViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 def metrica(request):
     if request.method == 'GET':
+
         snippets = Lectura_sen.objects.all()
         serializer = SensoresSerializer(snippets, many=True)
         return JsonResponse(serializer.data, safe=False)
@@ -40,11 +41,8 @@ def metrica(request):
         data = JSONParser().parse(request)
         serializer = SensoresSerializer(data=data)
 
-
-
         if serializer.is_valid():
-            serializer.save()
-            sensores.insert_one(data)
+            sensores.insert_one(serializer.validated_data)
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
