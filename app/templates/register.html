@@ -7,6 +7,29 @@
 {% block links %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/form.css' %}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const togglePassButton = document.getElementById("togglePass");
+            const passwordInput = document.getElementById("pass");
+            const confPassInput = document.getElementById("confpass");
+            const eyeIcon = togglePassButton.querySelector('img');
+            const toggleText = togglePassButton.querySelector('p');
+
+            togglePassButton.addEventListener("click", function() {
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    confPassInput.type = "text";
+                    eyeIcon.src = "{% static 'images/visibility_off.png' %}";
+                    toggleText.textContent = "Ocultar contraseñas";
+                } else {
+                    passwordInput.type = "password";
+                    confPassInput.type = "password";
+                    eyeIcon.src = "{% static 'images/visibility.png' %}";
+                    toggleText.textContent = "Mostrar contraseñas";
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -45,6 +68,7 @@
             name="birthday"
             label="Fecha de nacimiento"
             placeholder="Ingresa tu fecha de nacimiento"
+            max="2007-03-15"
             required
             error-text="Por favor, ingrese su fecha de nacimiento">
         </md-outlined-text-field>
@@ -57,6 +81,12 @@
             <md-select-option value="Masculino">
               <div slot="headline">Masculino</div>
             </md-select-option>
+            <md-select-option value="Otro">
+                <div slot="headline">Otro</div>
+            </md-select-option>
+            <md-select-option value="Prefiero no decirlo">
+                <div slot="headline">Prefiero no decirlo</div>
+            </md-select-option>
         </md-outlined-select>
 
         <md-outlined-text-field
@@ -66,6 +96,9 @@
             name="tel"
             label="Número de celular"
             placeholder="Ingresa tu número de teléfono"
+            minlength="10"
+            maxlength="10"
+            pattern="[0-9]{10}"
             required
             error-text="Por favor, ingrese su número de teléfono">
         </md-outlined-text-field>
@@ -77,8 +110,7 @@
             name="email"
             label="Correo electrónico"
             placeholder="Ingresa tu correo electrónico"
-            pattern="[\w\d-]+"
-            suffix-text="@gmail.com"
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
             required
             error-text="Por favor, ingrese su correo electrónico">
         </md-outlined-text-field>
@@ -102,8 +134,14 @@
             label="Confirmar contraseña"
             placeholder="Ingresa de nuevo su contraseña"
             required
-            error-text="Por favor, ingrese de nuevo su contraseña">
+            error-text="Por favor, ingrese de nuevo su contraseña"
+            style="margin-bottom: 0;">
         </md-outlined-text-field>
+
+        <button type="button" id="togglePass" class="togglePass">
+            <img src="{% static 'images/visibility.png' %}" alt="Visibilidad">
+            <p>Mostrar contraseña</p>
+        </button>
 
         <md-filled-tonal-button
             type="submit"

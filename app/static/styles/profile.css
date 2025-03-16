@@ -121,3 +121,26 @@
     --md-outlined-text-field-input-text-color: var(--Outer-space);
     --md-outlined-text-field-input-text-font: var(--font-primary);
 }
+
+.visibility {
+    display: flex;
+    flex-direction: row;
+    padding-top: 4%;
+    padding-bottom: 0%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.visibility button {
+    background-color: var(--Greyser);
+    border: none;
+}
+
+.visibility button img {
+    margin-top: 35%;
+    height: 20px;
+}
+
+.visibility p {
+    margin: 0;
+}

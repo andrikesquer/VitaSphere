@@ -15,14 +15,12 @@ import hashlib
 import hmac
 import base64
 from pymongo.errors import PyMongoError
-
 from .models import users_collection, sensores
 from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework import viewsets
 from .serializers import SensoresSerializer
 from .models import Lectura_sen
-
 
 class SensoresViewSet(viewsets.ModelViewSet):
     queryset = Lectura_sen.objects.all()
@@ -36,11 +34,11 @@ def metrica(request):
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
-        try:
-            # Parsear JSON de la solicitud
-            data = JSONParser().parse(request)
-            
-            # Insertar en MongoDB
+        data = JSONParser().parse(request)
+        serializer = SensoresSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
             sensores.insert_one(data)
 
             # Serializar y guardar en Django ORM (opcional)
@@ -73,7 +71,7 @@ def register(request):
 
         existing_user = users_collection.find_one({"email": email})
         if existing_user:
-            return HttpResponse("El usuario ya existe", status=400)
+            return HttpResponse("Este correo electrónico ya se encuentra registrado", status=400)
 
         hashed_password = encriptar_password(password)
 
@@ -94,8 +92,8 @@ def register(request):
         request.session["apellidos"] = fname
         request.session["fecha_nacimiento"] = birthday
         request.session["sexo"] = sex
-        request.session["email"] = email
         request.session["tel"] = tel
+        request.session["email"] = email
         request.session["is_authenticated"] = True
 
         return redirect("/")
@@ -114,6 +112,9 @@ def login(request):
 
         if not user:
             return HttpResponse("Usuario no encontrado", status=401)
+
+        if user.get("estado") != "activo":
+            return HttpResponse("Tu cuenta está inactiva. Contacta al administrador.", status=403)
 
         stored_password = user.get("password")
 
@@ -224,9 +225,65 @@ def update_profile(request):
             return redirect("profile")
 
     return render(request, "profile.html")
+
+def delete_account(request):
+    if request.method == "POST":
+        email = request.session.get("email")
+        result = users_collection.update_one(
+            {"email": email}, 
+            {"$set": {"estado": "inactivo"}}
+        )
+        if result.modified_count == 1:
+            request.session.flush()
+            return redirect("/")
+        else:
+            messages.error(request, "Error al eliminar cuenta, intente de nuevo")
+            return redirect("/profile/")
     
-def settings (request):
-    return render(request, 'settings.html')
+def contacts (request):
+    
+    email = request.session.get("email")
+    if not email:
+        return redirect('login')
+
+    user = users_collection.find_one({"email": email})
+    if not user:
+        return HttpResponse("Usuario no encontrado", status=404)
+
+    contacts = user.get('contacts', [])
+    return render(request, 'contacts.html', {'contacts': contacts})
+
+def manage_contacts(request):
+    if request.method == "POST":
+        email = request.session.get('email')
+        if not email:
+            return redirect('login')
+
+        # Procesar contactos existentes
+        names = request.POST.getlist('name')
+        tels = request.POST.getlist('tel')
+        relations = request.POST.getlist('relation')
+
+        # Procesar nuevos contactos
+        new_names = request.POST.getlist('new_name')
+        new_tels = request.POST.getlist('new_tel')
+        new_relations = request.POST.getlist('new_relation')
+
+        # Combinar todos los contactos
+        contacts = [
+            {'nombre': name, 'telefono': tel, 'relacion': rel}
+            for name, tel, rel in zip(names + new_names, tels + new_tels, relations + new_relations)
+        ]
+
+        # Actualizar en Mongo
+        users_collection.update_one(
+            {'email': email},
+            {'$set': {'contacts': contacts}}
+        )
+
+        return redirect('contacts')
+
+    return redirect('contacts')
 
 def get_live_data(request):
     

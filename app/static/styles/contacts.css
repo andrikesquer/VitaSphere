@@ -44,6 +44,7 @@
     justify-content: center;
     align-items: center;
     height: 80%;
+    max-height: 300px;
 }
 
 .settTitle, .imgCont {
@@ -68,13 +69,15 @@
     --md-sys-color-on-secondary-container: var(--Outer-space);
 
     --md-list-container-color: var(--Greyser);
-    --md-list-item-label-text-color: var(--Outer-space);
-    --md-list-item-supporting-text-color: var(--Mineral-green);
-    --md-list-item-label-text-font: var(--font-primary);
-    --md-list-item-supporting-text-font: var(--font-secondary);
+
+    --md-outlined-text-field-container-shape: 0px;
+    --md-sys-typescale-body-large: 400 1rem system-ui;
+    --md-sys-color-primary: var(--Mineral-green);
+    --md-outlined-text-field-input-text-color: var(--Outer-space);
+    --md-outlined-text-field-input-text-font: var(--font-primary);
 }
 
-.input {
+.editbtn {
     padding: 1%;
     border-radius: 5px;
     height: 75px;
@@ -83,16 +86,65 @@
     transition: 0.3s;
 }
 
-.rightCont {
-    flex: 2;
-}
-
-.contacts {
-    border-radius: 5px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-}
-
 .settBody {
     display: flex;
     width: 100%;
+}
+
+.input {
+    height: 5%;
+    width: 100%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
+
+.contacts-container {
+    flex: 2;
+    background-color: var(--Greyser);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    min-height: 400px;
+}
+
+.contact-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    transition: opacity 0.3s ease;
+}
+
+.contact-actions {
+    display: flex;
+    flex-direction: column;
+}
+
+.contacts-list {
+    border-radius: 1%;
+}
+
+.contacts-container p {
+    padding-left: 2%;
+}
+
+.form-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 3%;
+}
+
+.new-contact {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+.new-contact.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.add-btn {
+    margin-left: auto;
 }
