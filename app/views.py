@@ -21,8 +21,6 @@ from .models import users_collection, sensores
 from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework import viewsets
-
-
 import pytz
 
 
