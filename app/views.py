@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
-import json
+
 import random
+from django.utils import timezone
+
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
@@ -9,7 +11,7 @@ from bson.objectid import ObjectId
 from django.contrib.auth.hashers import check_password
 from rest_framework.parsers import JSONParser
 from project.settings import SECRET_KEY
-from .models import users_collection
+
 from django.contrib.auth.decorators import login_required
 import hashlib
 import hmac
@@ -19,29 +21,36 @@ from .models import users_collection, sensores
 from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework import viewsets
-from .serializers import SensoresSerializer
-from .models import Lectura_sen
 
-class SensoresViewSet(viewsets.ModelViewSet):
-    queryset = Lectura_sen.objects.all()
-    serializer_class = SensoresSerializer
+
+import pytz
+
+
 
 @csrf_exempt
 def metrica(request):
-    if request.method == 'GET':
-        snippets = Lectura_sen.objects.all()
-        serializer = SensoresSerializer(snippets, many=True)
-        return JsonResponse(serializer.data, safe=False)
 
-    elif request.method == 'POST':
-        try:
-            # Parsear JSON de la solicitud
-            data = JSONParser().parse(request)
-            # Insertar en MongoDB
-            sensores.insert_one(data)
-            return JsonResponse(serializer.data, status=201)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+   # if not request.session.get("is_authenticated", False):
+    #        return JsonResponse({"error": "El usuario no esta inicio seccion"}, status=500)
+
+    if  request.method == 'POST':
+        data = JSONParser().parse(request)
+
+        cst = pytz.timezone('America/Mexico_City')
+        now = timezone.now().astimezone(cst)
+        data.update({
+            "fecha": now.strftime("%Y-%m-%d"),
+            "hora": now.strftime("%H:%M:%S"),
+            "id_usuario":request.session.get("id")
+        })
+        print(data)
+        result = sensores.insert_one(data)
+
+        if result.inserted_id:
+            return JsonResponse({"message": "Inserción exitosa", "id": str(result.inserted_id)}, status=201)
+        else:
+            return JsonResponse({"error": "Error al insertar en la base de datos"}, status=500)
+
 
 def encriptar_password(password: str) -> str:
     hashed = hmac.new(SECRET_KEY.encode(), password.encode(), hashlib.sha256).digest()
