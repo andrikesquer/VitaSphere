@@ -6,7 +6,7 @@ from app import views
 router=routers.DefaultRouter()
 router.register(r'sensores',views.SensoresViewSet)
 urlpatterns=[
-    path('snippets/', views.metrica),
+    path('metrica/', views.metrica),
     path('ver/',include(router.urls))
 ]
 

@@ -25,7 +25,7 @@ import json
 from rest_framework import viewsets
 from .serializers import SensoresSerializer
 from .models import Lectura_sen
-
+import pytz
 
 class SensoresViewSet(viewsets.ModelViewSet):
     queryset = Lectura_sen.objects.all()
@@ -33,23 +33,26 @@ class SensoresViewSet(viewsets.ModelViewSet):
 
 @csrf_exempt
 def metrica(request):
-    if request.method == 'GET':
-
-        snippets = Lectura_sen.objects.all()
-        serializer = SensoresSerializer(snippets, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'POST':
+    if  request.method == 'POST':
         data = JSONParser().parse(request)
-        data["fecha_hora"] = timezone.now().replace(tzinfo=None)
+
+        cst = pytz.timezone('America/Mexico_City')
+        now = timezone.now().astimezone(cst)
+        data.update({
+            "fecha": now.strftime("%Y-%m-%d"),
+            "hora": now.strftime("%H:%M:%S")
+        })
         print(data)
-        serializer = SensoresSerializer(data=data)
+        result = sensores.insert_one(data)
 
-        if serializer.is_valid():
-            sensores.insert_one(serializer.validated_data)
+        if result.inserted_id:
+            return JsonResponse({"message": "Inserción exitosa", "id": str(result.inserted_id)}, status=201)
+        else:
+            return JsonResponse({"error": "Error al insertar en la base de datos"}, status=500)
 
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+
+
+
 
 def encriptar_password(password: str) -> str:
     hashed = hmac.new(SECRET_KEY.encode(), password.encode(), hashlib.sha256).digest()

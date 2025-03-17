@@ -9,10 +9,9 @@ users_collection = db['Users']
 sensores = db['Registro']
 
 class Lectura_sen(models.Model):
-    fecha_hora = models.DateTimeField(default=timezone.now)
     pulsaciones = models.IntegerField()
     oxigenacion = models.FloatField()
     temperatura = models.FloatField()
-
+    fecha_hora = models.DateTimeField(default=timezone.now)
 
 
