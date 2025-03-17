@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-import json
+
 import random
 from django.utils import timezone
 
@@ -10,29 +10,32 @@ from django.contrib.auth.hashers import make_password
 from bson.objectid import ObjectId 
 from django.contrib.auth.hashers import check_password
 from rest_framework.parsers import JSONParser
-
 from project.settings import SECRET_KEY
-from .models import users_collection
+
 from django.contrib.auth.decorators import login_required
 import hashlib
 import hmac
 import base64
 from pymongo.errors import PyMongoError
-
 from .models import users_collection, sensores
 from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework import viewsets
-from .serializers import SensoresSerializer
-from .models import Lectura_sen
+
+
 import pytz
 
-class SensoresViewSet(viewsets.ModelViewSet):
-    queryset = Lectura_sen.objects.all()
-    serializer_class = SensoresSerializer
+
 
 @csrf_exempt
 def metrica(request):
+
+   # if not request.session.get("is_authenticated", False):
+    #        return JsonResponse({"error": "El usuario no esta inicio seccion"}, status=500)
+    if  request.method == 'GET':
+
+        return HttpResponse("lol")
+
     if  request.method == 'POST':
         data = JSONParser().parse(request)
 
@@ -40,7 +43,8 @@ def metrica(request):
         now = timezone.now().astimezone(cst)
         data.update({
             "fecha": now.strftime("%Y-%m-%d"),
-            "hora": now.strftime("%H:%M:%S")
+            "hora": now.strftime("%H:%M:%S"),
+            "id_usuario":request.session.get("id")
         })
         print(data)
         result = sensores.insert_one(data)
@@ -49,9 +53,6 @@ def metrica(request):
             return JsonResponse({"message": "Inserción exitosa", "id": str(result.inserted_id)}, status=201)
         else:
             return JsonResponse({"error": "Error al insertar en la base de datos"}, status=500)
-
-
-
 
 
 def encriptar_password(password: str) -> str:
@@ -74,7 +75,7 @@ def register(request):
 
         existing_user = users_collection.find_one({"email": email})
         if existing_user:
-            return HttpResponse("El usuario ya existe", status=400)
+            return HttpResponse("Este correo electrónico ya se encuentra registrado", status=400)
 
         hashed_password = encriptar_password(password)
 
@@ -91,15 +92,15 @@ def register(request):
         })
 
         # Iniciar sesión automáticamente
-        request.session["nombre"] = lname
-        request.session["apellidos"] = fname
-        request.session["fecha_nacimiento"] = birthday
-        request.session["sexo"] = sex
-        request.session["email"] = email
-        request.session["tel"] = tel
-        request.session["is_authenticated"] = True
+       # request.session["nombre"] = lname
+       # request.session["apellidos"] = fname
+        #request.session["fecha_nacimiento"] = birthday
+        #request.session["sexo"] = sex
+        #request.session["tel"] = tel
+        #request.session["email"] = email
+        #request.session["is_authenticated"] = True
 
-        return redirect("/")
+        return redirect("login")
     
     return render(request, "register.html")
 
@@ -116,12 +117,16 @@ def login(request):
         if not user:
             return HttpResponse("Usuario no encontrado", status=401)
 
+        if user.get("estado") != "activo":
+            return HttpResponse("Tu cuenta está inactiva. Contacta al administrador.", status=403)
+
         stored_password = user.get("password")
         stored_confpassword = user.get("confpassword")
 
         hashed_password = encriptar_password(password)
 
         if hashed_password == stored_password or hashed_password == stored_confpassword:
+            request.session["id"] = str(user["_id"])
             request.session["nombre"] = user["nombre"]
             request.session["apellidos"] = user["apellidos"]
             request.session["fecha_nacimiento"] = user["fecha_nacimiento"]
@@ -144,14 +149,21 @@ def home (request):
     return render(request, "home.html")
 
 def statistics(request):
-    data = {
-        'categories': ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
-        'pulso': [72, 75, 78, 80, 76,90,100,],
-        'oxigeno': [98, 97, 99, 96, 98,60,70],
-        'temperatura': [37, 36.8, 37.2, 37.5, 37.1, 45,50],
-    }
-    
-    return render(request, 'statistics.html', {'data_json': json.dumps(data)})
+    ultimo = sensores.find({"Tipo":"Metricas"}).sort("_id", -1).limit(1)
+    caida = sensores.count_documents({"categoria":"caida"})
+    user_id = request.session.get("id")
+    user_id = ObjectId(user_id)
+    nombre = users_collection.find_one({"_id":user_id})
+
+    ult={}
+    for f in ultimo :
+        ult.update({"pul":(f["pulsaciones"])})
+        ult.update({"oxi":(f["oxigenacion"])})
+        ult.update({"tmpe":(f["temperatura"])})
+
+    ult.update({"fall":caida})
+    ult.update({"name":nombre["nombre"]})
+    return render(request, 'statistics.html', {'ultimos': ult})
 
 def profile(request):
     if not request.session.get("is_authenticated", False):
@@ -225,25 +237,94 @@ def update_profile(request):
             return redirect("profile")
 
     return render(request, "profile.html")
+
+def delete_account(request):
+    if request.method == "POST":
+        email = request.session.get("email")
+        result = users_collection.update_one(
+            {"email": email}, 
+            {"$set": {"estado": "inactivo"}}
+        )
+        if result.modified_count == 1:
+            request.session.flush()
+            return redirect("/")
+        else:
+            messages.error(request, "Error al eliminar cuenta, intente de nuevo")
+            return redirect("/profile/")
     
-def settings (request):
-    return render(request, 'settings.html')
+def contacts (request):
+    
+    email = request.session.get("email")
+    if not email:
+        return redirect('login')
+
+    user = users_collection.find_one({"email": email})
+    if not user:
+        return HttpResponse("Usuario no encontrado", status=404)
+
+    contacts = user.get('contacts', [])
+    return render(request, 'contacts.html', {'contacts': contacts})
+
+def manage_contacts(request):
+    if request.method == "POST":
+        email = request.session.get('email')
+        if not email:
+            return redirect('login')
+
+        # Procesar contactos existentes
+        names = request.POST.getlist('name')
+        tels = request.POST.getlist('tel')
+        relations = request.POST.getlist('relation')
+
+        # Procesar nuevos contactos
+        new_names = request.POST.getlist('new_name')
+        new_tels = request.POST.getlist('new_tel')
+        new_relations = request.POST.getlist('new_relation')
+
+        # Combinar todos los contactos
+        contacts = [
+            {'nombre': name, 'telefono': tel, 'relacion': rel}
+            for name, tel, rel in zip(names + new_names, tels + new_tels, relations + new_relations)
+        ]
+
+        # Actualizar en Mongo
+        users_collection.update_one(
+            {'email': email},
+            {'$set': {'contacts': contacts}}
+        )
+
+        return redirect('contacts')
+
+    return redirect('contacts')
 
 def get_live_data(request):
     """Genera datos dinámicos para Highcharts"""
-    
+
+    datas = list(sensores.find({"Tipo": "Metricas"}).sort("_id", -1).limit(10))  # Convertimos el cursor en lista
+
+    pulsos = [doc["pulsaciones"] for doc in datas]
+    oxigeno = [doc["oxigenacion"] for doc in datas]
+    temperatura = [doc["temperatura"] for doc in datas]
+    horas = [doc["hora"] for doc in datas]
+    pulsos.reverse()
+    oxigeno.reverse()
+    temperatura.reverse()
+    horas.reverse()
+
+    print(horas)
+
     # Obtener la hora actual
     now = datetime.now()
     
     # Generar una lista de las últimas 10 horas
-    horas = [(now - timedelta(hours=i)).strftime("%H:%M") for i in range(9, -1, -1)]
+    #horas = [(now - timedelta(hours=i)).strftime("%H:%M") for i in range(9, -1, -1)]
     
     # Generar datos aleatorios para cada hora
     data = {
         "categories": horas,  # Eje X (Horas)
-        "pulso": [random.randint(60, 100) for _ in range(10)],
-        "oxigeno": [random.randint(95, 100) for _ in range(10)],
-        "temperatura": [round(random.uniform(36.5, 37.5), 1) for _ in range(10)]
+        "pulso": pulsos, #[random.randint(60, 100) for _ in range(10)],
+        "oxigeno": oxigeno,#[random.randint(95, 100) for _ in range(10)],
+        "temperatura": temperatura,#[round(random.uniform(36.5, 37.5), 1) for _ in range(10)]
     }
     
     return JsonResponse(data)
