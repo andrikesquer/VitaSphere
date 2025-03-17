@@ -16,8 +16,8 @@
 
 {% block content %}
     <div class="fondo">
-       <h1 class="titulo">Hola, {{ request.session.nombre }}!</h1>
-       <h3 class="subtitulo">Aquí tienes un resumen de tus estadísticas de salud.</h2>
+       <h1 class="titulo">Hola, {{ ultimos.name }}!</h1>
+       <h2 class="subtitulo">Aquí tienes un resumen de tus estadísticas de salud.</h2>
 
         <div class="sep">
            <div class="con">
@@ -25,7 +25,7 @@
                    <p class="peque">Pulso</p>
                    <img class="iconos" src="{% static 'images/statistics/heart.png' %}" alt="Imagen corazón">
                 </div>
-                <p class="sign">{{bmp}} bpm</p>
+                <p class="sign">{{ultimos.pul}} bpm</p>
            </div>
 
            <div class="con">
@@ -33,7 +33,7 @@
                    <p class="peque">Nivel de oxígeno</p>
                    <img class="iconos" src="{% static 'images/statistics/spo.png' %}" alt="Imagen gota">
                 </div>
-                <p class="sign">{{oxy}}%</p>
+                <p class="sign">{{ultimos.oxi}}%</p>
            </div>
 
            <div class="con">
@@ -41,14 +41,14 @@
                     <p class="peque">Temperatura</p>
                     <img class="iconos" src="{% static 'images/statistics/termometer.png' %}" alt="Imagen nube">
                 </div>
-                <p class="sign">{{tem}}°C</p>
+                <p class="sign">{{ultimos.tmpe}}°C</p>
            </div>
 
            <div class="con">
                 <div class="Tex_img">
                     <p class="peque">Caídas (Últimos 30 días)</p>
                 </div>
-                <p class="sign">{{falls}}</p>
+                <p class="sign">{{ultimos.fall}}</p>
            </div>
        </div>
 

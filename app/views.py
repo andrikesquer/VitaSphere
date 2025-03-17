@@ -30,6 +30,9 @@ def metrica(request):
 
    # if not request.session.get("is_authenticated", False):
     #        return JsonResponse({"error": "El usuario no esta inicio seccion"}, status=500)
+    if  request.method == 'GET':
+
+        return HttpResponse("lol")
 
     if  request.method == 'POST':
         data = JSONParser().parse(request)
@@ -144,14 +147,21 @@ def home (request):
     return render(request, "home.html")
 
 def statistics(request):
-    data = {
-        'categories': ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
-        'pulso': [72, 75, 78, 80, 76,90,100,],
-        'oxigeno': [98, 97, 99, 96, 98,60,70],
-        'temperatura': [37, 36.8, 37.2, 37.5, 37.1, 45,50],
-    }
-    
-    return render(request, 'statistics.html', {'data_json': json.dumps(data)})
+    ultimo = sensores.find({"Tipo":"Metricas"}).sort("_id", -1).limit(1)
+    caida = sensores.count_documents({"categoria":"caida"})
+    user_id = request.session.get("id")
+    user_id = ObjectId(user_id)
+    nombre = users_collection.find_one({"_id":user_id})
+
+    ult={}
+    for f in ultimo :
+        ult.update({"pul":(f["pulsaciones"])})
+        ult.update({"oxi":(f["oxigenacion"])})
+        ult.update({"tmpe":(f["temperatura"])})
+
+    ult.update({"fall":caida})
+    ult.update({"name":nombre["nombre"]})
+    return render(request, 'statistics.html', {'ultimos': ult})
 
 def profile(request):
     if not request.session.get("is_authenticated", False):
@@ -287,19 +297,32 @@ def manage_contacts(request):
 
 def get_live_data(request):
     """Genera datos dinámicos para Highcharts"""
-    
+
+    datas = list(sensores.find({"Tipo": "Metricas"}).sort("_id", -1).limit(10))  # Convertimos el cursor en lista
+
+    pulsos = [doc["pulsaciones"] for doc in datas]
+    oxigeno = [doc["oxigenacion"] for doc in datas]
+    temperatura = [doc["temperatura"] for doc in datas]
+    horas = [doc["hora"] for doc in datas]
+    pulsos.reverse()
+    oxigeno.reverse()
+    temperatura.reverse()
+    horas.reverse()
+
+    print(horas)
+
     # Obtener la hora actual
     now = datetime.now()
     
     # Generar una lista de las últimas 10 horas
-    horas = [(now - timedelta(hours=i)).strftime("%H:%M") for i in range(9, -1, -1)]
+    #horas = [(now - timedelta(hours=i)).strftime("%H:%M") for i in range(9, -1, -1)]
     
     # Generar datos aleatorios para cada hora
     data = {
         "categories": horas,  # Eje X (Horas)
-        "pulso": [random.randint(60, 100) for _ in range(10)],
-        "oxigeno": [random.randint(95, 100) for _ in range(10)],
-        "temperatura": [round(random.uniform(36.5, 37.5), 1) for _ in range(10)]
+        "pulso": pulsos, #[random.randint(60, 100) for _ in range(10)],
+        "oxigeno": oxigeno,#[random.randint(95, 100) for _ in range(10)],
+        "temperatura": temperatura,#[round(random.uniform(36.5, 37.5), 1) for _ in range(10)]
     }
     
     return JsonResponse(data)
