@@ -25,7 +25,7 @@
                    <p class="peque">Pulso</p>
                    <img class="iconos" src="{% static 'images/statistics/heart.png' %}" alt="Imagen corazón">
                 </div>
-                <p class="sign">{{ultimos.pul}} bpm</p>
+                <p class="sign" id="ls">0 bpm</p>
            </div>
 
            <div class="con">
@@ -33,7 +33,7 @@
                    <p class="peque">Nivel de oxígeno</p>
                    <img class="iconos" src="{% static 'images/statistics/spo.png' %}" alt="Imagen gota">
                 </div>
-                <p class="sign">{{ultimos.oxi}}%</p>
+                <p class="sign" id="lo">0%</p>
            </div>
 
            <div class="con">
@@ -41,14 +41,14 @@
                     <p class="peque">Temperatura</p>
                     <img class="iconos" src="{% static 'images/statistics/termometer.png' %}" alt="Imagen nube">
                 </div>
-                <p class="sign">{{ultimos.tmpe}}°C</p>
+                <p class="sign" id="lte">0°C</p>
            </div>
 
            <div class="con">
                 <div class="Tex_img">
                     <p class="peque">Caídas (Últimos 30 días)</p>
                 </div>
-                <p class="sign">{{ultimos.fall}}</p>
+                <p class="sign" id="fall">0</p>
            </div>
        </div>
 
@@ -85,6 +85,11 @@
                         chart.series[0].setData(data.pulso);
                         chart.series[1].setData(data.oxigeno);
                         chart.series[2].setData(data.temperatura);
+                        document.getElementById("ls").innerText = data.ls + " BPM";
+                        document.getElementById("lo").innerText = (data.lo).toFixed(2) + " %";
+                        document.getElementById("lte").innerText = (data.lte).toFixed(2) + " °C";
+                        document.getElementById("fall").innerText = data.cai;
+
                     })
                     .catch(error => console.error("Error al obtener datos:", error));
             }

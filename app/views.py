@@ -299,7 +299,9 @@ def get_live_data(request):
     """Genera datos dinámicos para Highcharts"""
 
     datas = list(sensores.find({"Tipo": "Metricas"}).sort("_id", -1).limit(10))  # Convertimos el cursor en lista
-
+    caida = sensores.count_documents({"categoria":"caida"})
+    user_id = request.session.get("id")
+    user_id = ObjectId(user_id)
     pulsos = [doc["pulsaciones"] for doc in datas]
     oxigeno = [doc["oxigenacion"] for doc in datas]
     temperatura = [doc["temperatura"] for doc in datas]
@@ -309,7 +311,14 @@ def get_live_data(request):
     temperatura.reverse()
     horas.reverse()
 
+    p=pulsos.copy()
+    o=oxigeno.copy()
+    t=temperatura.copy()
+
+
     print(horas)
+    print(caida)
+
 
     # Obtener la hora actual
     now = datetime.now()
@@ -323,6 +332,11 @@ def get_live_data(request):
         "pulso": pulsos, #[random.randint(60, 100) for _ in range(10)],
         "oxigeno": oxigeno,#[random.randint(95, 100) for _ in range(10)],
         "temperatura": temperatura,#[round(random.uniform(36.5, 37.5), 1) for _ in range(10)]
+        "ls":p.pop(),
+        "lo":o.pop(),
+        "lte":t.pop(),
+        "cai":caida,
+
     }
     
     return JsonResponse(data)
