@@ -74,6 +74,15 @@
         </md-filled-tonal-button>
         
     </form>
+    {% if messages %}
+    {% for message in messages %}
+        {% if forloop.first %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
     {% if error %}
         <p class="wrongCredentials">{{error}}</p>
     {% endif %}
