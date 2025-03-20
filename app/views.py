@@ -6,23 +6,29 @@ from django.utils import timezone
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password
 from bson.objectid import ObjectId 
-from django.contrib.auth.hashers import check_password
 from rest_framework.parsers import JSONParser
 from project.settings import SECRET_KEY
 
-from django.contrib.auth.decorators import login_required
 import hashlib
 import hmac
 import base64
 from pymongo.errors import PyMongoError
 from .models import users_collection, sensores
 from django.views.decorators.csrf import csrf_exempt
-import json
 from rest_framework import viewsets
 import pytz
 
+#from twilio.rest import Client  No se va a usar
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+
+
+#to_num = "+526141591868"
+#msg= "Se ha caido el abuelito"
 
 
 @csrf_exempt
@@ -32,7 +38,7 @@ def metrica(request):
     #        return JsonResponse({"error": "El usuario no esta inicio seccion"}, status=500)
     if  request.method == 'GET':
 
-        return HttpResponse("lol")
+        return HttpResponse("lol")  #que hace esto?, se puede quitar?
 
     if  request.method == 'POST':
         data = JSONParser().parse(request)
@@ -69,11 +75,13 @@ def register(request):
         conf_pass = request.POST.get("confpass")
 
         if password != conf_pass:
-            return HttpResponse("Las contraseñas no coinciden", status=400)
+            messages.error(request, "Las contraseñas no coinciden")
+            return redirect("register")
 
         existing_user = users_collection.find_one({"email": email})
         if existing_user:
-            return HttpResponse("Este correo electrónico ya se encuentra registrado", status=400)
+            messages.error(request, "El correo ya está registrado")
+            return redirect("register")
 
         hashed_password = encriptar_password(password)
 
@@ -108,22 +116,25 @@ def login(request):
         password = request.POST.get("password", "").strip()
 
         if not email or not password:
-            return HttpResponse("Por favor, ingresa usuario y contraseña", status=400)
+            messages.error(request, "Correo y contraseña son obligatorios")
+            return redirect("login")
 
         user = users_collection.find_one({"email": email})
 
         if not user:
-            return HttpResponse("Usuario no encontrado", status=401)
+            messages.error(request, "Usuario no encontrado")
+            return redirect("login")
 
         if user.get("estado") != "activo":
-            return HttpResponse("Tu cuenta está inactiva. Contacta al administrador.", status=403)
+            messages.error(request, "Usuario inactivo") 
+            return redirect("login")
 
         stored_password = user.get("password")
-        stored_confpassword = user.get("confpassword")
+
 
         hashed_password = encriptar_password(password)
 
-        if hashed_password == stored_password or hashed_password == stored_confpassword:
+        if hashed_password == stored_password:
             request.session["id"] = str(user["_id"])
             request.session["nombre"] = user["nombre"]
             request.session["apellidos"] = user["apellidos"]
@@ -132,10 +143,13 @@ def login(request):
             request.session["email"] = user["email"]
             request.session["tel"] = user["telefono"]
             request.session["is_authenticated"] = True
-
+            #send_msg(to_num,msg)
+            enviar_alertas(request, "Alerta de inicio de sesión", "Se ha iniciado sesión en tu cuenta")
             return redirect("/")
 
-        return HttpResponse("Usuario o contraseña incorrectos", status=401)
+        messages.error(request, "Usuario o contraseña incorrectos")
+        return redirect("login")
+    
 
     return render(request, "login.html")
 
@@ -326,3 +340,39 @@ def get_live_data(request):
     }
     
     return JsonResponse(data)
+
+
+
+
+def send_email(to_emails, subject, body):
+    sender_email = "arturo2005sidas@gmail.com"
+    sender_password = "ypmt jorj tdiy mifc"
+
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = ", ".join(to_emails) 
+    message["Subject"] = subject
+
+    message.attach(MIMEText(body, "plain"))
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(sender_email, sender_password) 
+    server.sendmail(sender_email, to_emails, message.as_string())
+    server.quit()
+
+    print("Correo enviado exitosamente")
+
+
+def enviar_alertas(request, title, body):
+    usuario = users_collection.find_one({"_id": ObjectId(request.session.get("id"))})
+    if usuario and 'contacts' in usuario:
+        correos = [contact['telefono'] for contact in usuario['contacts']]
+
+        for correo in correos:
+            send_email([correo], title, body)
+
+        return HttpResponse("Alertas enviadas correctamente")
+    else:
+        return HttpResponse("Usuario no encontrado", status=404)
+

@@ -31,7 +31,15 @@
         });
     </script>
 {% endblock %}
-
+{% if messages %}
+    {% for message in messages %}
+        {% if forloop.first %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
 {% block content %}
 <div class="divForm">
     <h1 class="greetingForm">Crea una cuenta!</h1>
