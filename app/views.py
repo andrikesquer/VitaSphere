@@ -46,7 +46,12 @@ def metrica(request):
         })
         print(data)
         result = sensores.insert_one(data)
+        if(data["tipo"] == "Alerta"):
+            print("Son alerta")
+        else:
+            print("es metrica")
 
+        #NO SE SI ESTE BIEN
         if result.inserted_id:
             return JsonResponse({"message": "Inserción exitosa", "id": str(result.inserted_id)}, status=201)
         else:
@@ -147,7 +152,7 @@ def home (request):
     return render(request, "home.html")
 
 def statistics(request):
-    ultimo = sensores.find({"Tipo":"Metricas"}).sort("_id", -1).limit(1)
+    ultimo = sensores.find({"tipo":"Metricas"}).sort("_id", -1).limit(1)
     caida = sensores.count_documents({"categoria":"caida"})
     user_id = request.session.get("id")
     user_id = ObjectId(user_id)
@@ -298,7 +303,7 @@ def manage_contacts(request):
 def get_live_data(request):
     """Genera datos dinámicos para Highcharts"""
 
-    datas = list(sensores.find({"Tipo": "Metricas"}).sort("_id", -1).limit(10))  # Convertimos el cursor en lista
+    datas = list(sensores.find({"tipo": "Metricas"}).sort("_id", -1).limit(10))  # Convertimos el cursor en lista
     caida = sensores.count_documents({"categoria":"caida"})
     user_id = request.session.get("id")
     user_id = ObjectId(user_id)
