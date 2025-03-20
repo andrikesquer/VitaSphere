@@ -54,6 +54,7 @@ def metrica(request):
         result = sensores.insert_one(data)
         if(data["tipo"] == "Alerta"):
             print("Son alerta")
+            enviar_alertas(request, "Alerta de vitasphere", "Se ha detectado una caida o anomalias en los signos vitales de su familiar")
         else:
             print("es metrica")
 
@@ -149,7 +150,6 @@ def login(request):
             request.session["tel"] = user["telefono"]
             request.session["is_authenticated"] = True
             #send_msg(to_num,msg)
-            enviar_alertas(request, "Alerta de inicio de sesión", "Se ha iniciado sesión en tu cuenta")
             return redirect("/")
 
         messages.error(request, "Usuario o contraseña incorrectos")
