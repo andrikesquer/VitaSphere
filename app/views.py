@@ -365,7 +365,7 @@ def get_live_data(request):
 
 def send_email(to_emails, subject, body):
     sender_email = "arturo2005sidas@gmail.com"
-    sender_password = "ypmt jorj tdiy mifc"
+    sender_password = "caxh kfgk nzaj vads"
 
     message = MIMEMultipart()
     message["From"] = sender_email
