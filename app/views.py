@@ -42,19 +42,20 @@ def metrica(request):
 
     if  request.method == 'POST':
         data = JSONParser().parse(request)
-
+        
         cst = pytz.timezone('America/Mexico_City')
         now = timezone.now().astimezone(cst)
         data.update({
             "fecha": now.strftime("%Y-%m-%d"),
             "hora": now.strftime("%H:%M:%S"),
-            "id_usuario":request.session.get("id")
+              
         })
         print(data)
         result = sensores.insert_one(data)
         if(data["tipo"] == "Alerta"):
-            print("Son alerta")
             enviar_alertas(request, "Alerta de vitasphere", "Se ha detectado una caida o anomalias en los signos vitales de su familiar")
+            
+            print("Son alerta")
         else:
             print("es metrica")
 
@@ -150,6 +151,7 @@ def login(request):
             request.session["tel"] = user["telefono"]
             request.session["is_authenticated"] = True
             #send_msg(to_num,msg)
+            enviar_alertas(request, "Alerta de vitasphere", "Se ha detectado una caida o anomalias en los signos vitales de su familiar")
             return redirect("/")
 
         messages.error(request, "Usuario o contraseña incorrectos")
@@ -167,7 +169,7 @@ def home (request):
 
 def statistics(request):
     user_id = request.session.get("id")
-    user_id = ObjectId(user_id)
+    #user_id = ObjectId(user_id)
 
 
     ultimo = sensores.find_one(
@@ -179,7 +181,7 @@ def statistics(request):
     caida = sensores.count_documents({"id_user": user_id, "categoria": "caida"})
 
 
-    nombre = users_collection.find_one({"_id": user_id}) or {}
+    nombre = users_collection.find_one({"_id": ObjectId(user_id)}) or {}
 
     print(user_id)
     print(ultimo)
@@ -196,7 +198,7 @@ def statistics(request):
 
     ult.update({
         "fall": caida,
-        "name": nombre.get("nombre", "Usuario Desconocido")
+        "name": nombre.get("nombre", "U")
     })
 
     return render(request, 'statistics.html', {'ultimos': ult})
@@ -336,7 +338,7 @@ def manage_contacts(request):
 def get_live_data(request):
     """Genera datos dinámicos para Highcharts"""
     user_id = request.session.get("id")
-    user_id = ObjectId(user_id)
+    #user_id = ObjectId(user_id)
     print(user_id)
     datas = list(sensores.find(
         {"id_user": user_id, "tipo": "Metricas"}
