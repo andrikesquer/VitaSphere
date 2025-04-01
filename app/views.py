@@ -166,20 +166,39 @@ def home (request):
     return render(request, "home.html")
 
 def statistics(request):
-    ultimo = sensores.find({"tipo":"Metricas"}).sort("_id", -1).limit(1)
-    caida = sensores.count_documents({"categoria":"caida"})
     user_id = request.session.get("id")
     user_id = ObjectId(user_id)
-    nombre = users_collection.find_one({"_id":user_id})
 
-    ult={}
-    for f in ultimo :
-        ult.update({"pul":(f["pulsaciones"])})
-        ult.update({"oxi":(f["oxigenacion"])})
-        ult.update({"tmpe":(f["temperatura"])})
 
-    ult.update({"fall":caida})
-    ult.update({"name":nombre["nombre"]})
+    ultimo = sensores.find_one(
+        {"id_user": user_id, "tipo": "Metricas"},
+        sort=[("_id", -1)]
+    )
+
+
+    caida = sensores.count_documents({"id_user": user_id, "categoria": "caida"})
+
+
+    nombre = users_collection.find_one({"_id": user_id}) or {}
+
+    print(user_id)
+    print(ultimo)
+    print(nombre)
+
+
+    ult = {}
+    if ultimo:
+        ult.update({
+            "pul": ultimo.get("pulsaciones", "N/A"),
+            "oxi": ultimo.get("oxigenacion", "N/A"),
+            "tmpe": ultimo.get("temperatura", "N/A")
+        })
+
+    ult.update({
+        "fall": caida,
+        "name": nombre.get("nombre", "Usuario Desconocido")
+    })
+
     return render(request, 'statistics.html', {'ultimos': ult})
 
 def profile(request):
@@ -316,11 +335,15 @@ def manage_contacts(request):
 
 def get_live_data(request):
     """Genera datos dinámicos para Highcharts"""
-
-    datas = list(sensores.find({"tipo": "Metricas"}).sort("_id", -1).limit(10))  # Convertimos el cursor en lista
-    caida = sensores.count_documents({"categoria":"caida"})
     user_id = request.session.get("id")
     user_id = ObjectId(user_id)
+    print(user_id)
+    datas = list(sensores.find(
+        {"id_user": user_id, "tipo": "Metricas"}
+    ).sort("_id", -1).limit(10))
+
+    caida = sensores.count_documents({"id_user": user_id, "categoria": "caida"})
+
     pulsos = [doc["pulsaciones"] for doc in datas]
     oxigeno = [doc["oxigenacion"] for doc in datas]
     temperatura = [doc["temperatura"] for doc in datas]
